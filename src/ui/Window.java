@@ -1,6 +1,5 @@
 package ui;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -9,6 +8,7 @@ import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
@@ -42,6 +42,8 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 		this.frame.addComponentListener(this);
 		this.keyboard = Keyboard.getInstance();
 		this.keyboard.addListener(this);
+		System.setProperty("sun.java2d.opengl", "false");
+		System.setProperty("sun.java2d.d3d", "false");
 	}
 
 	public void setSize(Integer width, Integer height) {
@@ -52,7 +54,7 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 		this.board.setPreferredSize(dimension);
 	}
 
-	public void add(Component component) {
+	public void add(JComponent component) {
 		this.frame.add(component, 0);
 		this.frame.revalidate();
 	}
@@ -178,6 +180,14 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 	public void componentShown(ComponentEvent arg0) {
 		// TODO Apéndice de método generado automáticamente
 
+	}
+
+//	public void update(Double time) {
+//		this.board.revalidate();
+//	}
+
+	public void render(Integer fps) {
+		this.frame.repaint();
 	}
 
 }

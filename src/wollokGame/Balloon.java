@@ -7,6 +7,8 @@ import java.awt.Graphics;
 
 import javax.swing.JComponent;
 
+import org.uqbar.project.wollok.interpreter.core.WollokObject;
+
 import geometry.Point;
 import ui.Color;
 import ui.graphics.GraphicsRenderer;
@@ -14,35 +16,40 @@ import ui.graphics.GraphicsRenderer;
 @SuppressWarnings("serial")
 public class Balloon extends JComponent {
 
-	private final VisualComponent component;
+	private final WollokObject component;
 	private final Message message;
-
-	public Balloon(VisualComponent component, String message) {
-		this.component = component;
-		this.message = new Message(message, new Point());
-	}
-
-	public Balloon(VisualComponent component, String message, Color color) {
-		this.component = component;
-		this.message = new Message(message, new Point(), color);
-	}
-
-	public Balloon(VisualComponent component, String message, Integer fontSize) {
-		this.component = component;
-		this.message = new Message(message, new Point(), fontSize);
-	}
 	
-	public Balloon(VisualComponent component, String message, Integer fontSize, Integer fontStyle) {
-		this.component = component;
-		this.message = new Message(message, new Point(), BLACK, fontSize, fontStyle);
-	}
+	public Balloon(WollokObject component, WollokObject message) {
+	this.component = component;
+	this.message = new Message(message.toString());
+}
+	
+//	public Balloon(VisualComponent component, String message) {
+//		this.component = component;
+//		this.message = new Message(message, new Point());
+//	}
+//
+//	public Balloon(VisualComponent component, String message, Color color) {
+//		this.component = component;
+//		this.message = new Message(message, new Point(), color);
+//	}
+//
+//	public Balloon(VisualComponent component, String message, Integer fontSize) {
+//		this.component = component;
+//		this.message = new Message(message, new Point(), fontSize);
+//	}
+//	
+//	public Balloon(VisualComponent component, String message, Integer fontSize, Integer fontStyle) {
+//		this.component = component;
+//		this.message = new Message(message, new Point(), BLACK, fontSize, fontStyle);
+//	}
+//
+//	public Balloon(VisualComponent component, String message, Color color, Integer fontSize, Integer fontStyle) {
+//		this.component = component;
+//		this.message = new Message(message, new Point(), color, fontSize, fontStyle);
+//	}
 
-	public Balloon(VisualComponent component, String message, Color color, Integer fontSize, Integer fontStyle) {
-		this.component = component;
-		this.message = new Message(message, new Point(), color, fontSize, fontStyle);
-	}
-
-	public VisualComponent getSpeecher() {
+	public WollokObject getSpeecher() {
 		return component;
 	}
 

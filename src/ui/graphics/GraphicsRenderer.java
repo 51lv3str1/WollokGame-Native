@@ -156,7 +156,9 @@ public class GraphicsRenderer {
 	 */
 	public void render(Balloon balloon) {
 		final FontMetrics metrics = this.graphics.getFontMetrics(balloon.getFont());
-		final Point position = balloon.getSpeecher().right(1);
+		final Integer x = Integer.valueOf(balloon.getSpeecher().call("position").call("x").toString());
+		final Integer y = Integer.valueOf(balloon.getSpeecher().call("position").call("y").toString());
+		final Point position = new Point(x, y);
 		final Rectangle bounds = new Rectangle(position.getX(), position.getY(), metrics.stringWidth(balloon.getMessageText()) + 10, metrics.getHeight() * 2);
 		final int boundsRoundBorder = 20;
 		final int messageX = bounds.x + (bounds.width - metrics.stringWidth(balloon.getMessageText())) / 2;

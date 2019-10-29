@@ -256,6 +256,16 @@ public class WollokGameObject {
 	}
 	
 	/**
+	 * Draws a dialog balloon with a message in given visual object position.
+	 * 
+	 * @param component
+	 * @param message
+	 */
+	public void say(WollokObject component, WollokObject message) {
+		window.add(new Balloon(component, message));
+	}
+	
+	/**
 	 * Starts the game.
 	 */
 	public void start() {
@@ -277,7 +287,7 @@ public class WollokGameObject {
 	 * @param fps the current fps count.
 	 */
 	public void render(Integer fps) {
-		this.board.repaint();
+		this.window.render(fps);
 	}
 
 	/**

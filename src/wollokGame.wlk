@@ -148,6 +148,14 @@ object wollokGame {
 	method createSpritesheet(path, rows, columns) {
 		return new Spritesheet(path=path, rows=rows, columns=columns)
 	}
+	
+	/**
+	 * Draws a dialog balloon with a message in given visual object position.
+	 * 
+	 * @param component
+	 * @param message
+	 */
+	method say(component, message) native
 
 	/**
 	 * Starts the game.

@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<projectDescription>
-	<name>WollokGamesJNative</name>
-	<comment></comment>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><projectDescription>
+	<name>WollokGame-Native</name>
+	<comment/>
 	<projects>
 	</projects>
 	<buildSpec>

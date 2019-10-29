@@ -19,6 +19,20 @@ public class Message extends JComponent {
 	private Point point;
 	private Color color;
 	private Font font;
+	
+	public Message(String text) {
+		this.text = text;
+		this.point = new Point();
+		this.color = BLACK;
+		this.font = new Font("Dialog", PLAIN, 15);
+	}
+	
+	public Message(String text, Integer fontSize) {
+		this.text = text;
+		this.point = new Point();;
+		this.color = BLACK;
+		this.font = new Font("Dialog", PLAIN, fontSize);
+	}
 
 	public Message(String text, Point point) {
 		this.text = text;

@@ -98,6 +98,7 @@ public class Board extends JPanel {
 	
 	public void update(Double time){
 		this.components.stream().forEach(component -> component.update(time));
+		this.revalidate();
 	}
 
 }

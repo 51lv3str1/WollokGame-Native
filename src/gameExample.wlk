@@ -5,7 +5,6 @@ object duba {
 
 	var property position = wollokGame.at(0,0)
 	var property spritesheet = wollokGame.createSpritesheet("assets/duba.png", 15, 10)
-	
 	var property animation = spritesheet.animation(true, 
 		20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 35, 36, 37,
 		38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -95,6 +94,7 @@ object example {
 		wollokGame.addVisualIn(decoracion3, wollokGame.at(4, 3))
 		wollokGame.addVisualIn(churrasco, wollokGame.at(5, 4))
 		wollokGame.addVisualCharacter(duba)
+		wollokGame.say(duba, "estoy muy lageada :$")
 		wollokGame.start()
 	}
 
