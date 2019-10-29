@@ -145,6 +145,13 @@ object wollokGame {
 	 */
 	method onTick(milliseconds, name, closure) native
 	
+	/**
+	 * Creates a spritesh. A spritesheet can create Sprites and Animation.
+	 * 
+	 * @param path the image path.
+	 * @param rows the rows that conform the spritesheet.
+	 * @param columns thee columns that conforms the spritesheet.
+	 */
 	method createSpritesheet(path, rows, columns) {
 		return new Spritesheet(path=path, rows=rows, columns=columns)
 	}
