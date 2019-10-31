@@ -1,6 +1,8 @@
-package ui;
+package ui.texture;
 
-public class Animation extends SpritesheetBasedGraphics {
+import ui.SpriteSheet;
+
+public class Animation extends SpritesheetBasedTexture {
 
 	private final Integer[] frameIndexes;
 	private final Boolean loop;
@@ -8,14 +10,14 @@ public class Animation extends SpritesheetBasedGraphics {
 	private Integer ratio;
 	private Double counter = 0.0;
 
-	protected Animation(SpriteSheet spriteSheet, Integer ratio, Integer... frameIndexes) {
+	public Animation(SpriteSheet spriteSheet, Integer ratio, Integer... frameIndexes) {
 		super(spriteSheet);
 		this.frameIndexes = frameIndexes;
 		this.ratio = ratio;
 		this.loop = false;
 	}
 
-	protected Animation(SpriteSheet spriteSheet, Boolean loop, Integer ratio, Integer... frameIndexes) {
+	public Animation(SpriteSheet spriteSheet, Boolean loop, Integer ratio, Integer... frameIndexes) {
 		super(spriteSheet);
 		this.frameIndexes = frameIndexes;
 		this.ratio = ratio;
@@ -24,6 +26,11 @@ public class Animation extends SpritesheetBasedGraphics {
 
 	public Integer getRatio() {
 		return this.ratio;
+	}
+
+	public void restart() {
+		this.setIndex(this.frameIndexes[0]);
+		this.frameIndexCount = 0;
 	}
 
 	@Override
@@ -49,11 +56,6 @@ public class Animation extends SpritesheetBasedGraphics {
 
 		counter = (counter + 1) % ratio;
 
-	}
-
-	public void restart() {
-		this.setIndex(this.frameIndexes[0]);
-		this.frameIndexCount = 0;
 	}
 
 }

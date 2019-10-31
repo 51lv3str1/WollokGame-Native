@@ -1,6 +1,6 @@
 package ui.menus;
 
-import wollokGame.GameDebugger;
+import debugger.GameDebugger;
 
 public class ShowGridMenuItem extends MenuItem {
 

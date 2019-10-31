@@ -1,4 +1,4 @@
-package ui.graphics;
+package ui.settings;
 
 import static java.awt.RenderingHints.*;
 

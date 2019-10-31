@@ -84,15 +84,13 @@ public class Dimension {
 	}
 
 	/**
-	 * Indicates whether some other object is "equal to" this one.
+	 * Indicates whether some other dimension is "equal to" this one.
 	 * 
 	 * @param obj an object to be compared with this Dimension.
-	 * @return true if this object is the same as the obj argument; false otherwise.
+	 * @return true if this dimension is the same as the another argument; false otherwise.
 	 */
-	@Override
-	public boolean equals(Object obj) {
-		Dimension dimension = (Dimension) obj;
-		return this.getWidth() == dimension.getWidth() && this.getHeight() == dimension.getHeight();
+	public boolean equals(Dimension another) {
+		return this.getWidth() == another.getWidth() && this.getHeight() == another.getHeight();
 	}
 
 }

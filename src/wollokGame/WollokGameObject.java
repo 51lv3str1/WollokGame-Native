@@ -18,6 +18,9 @@ import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 import audio.Audio;
 import audio.BGM;
 import audio.Sound;
+import component.Actor;
+import component.Balloon;
+import component.Board;
 import geometry.Point;
 import input.Keyboard;
 import ui.Window;
@@ -52,7 +55,8 @@ public class WollokGameObject {
 		this.evaluator = (WollokInterpreterEvaluator) interpreter.getEvaluator();
 		this.gameloop = new GameLoop(this);
 		this.board = new Board(8, 8);
-		this.window = new Window(this.board, 800, 600);
+		this.window = Window.getInstance();
+		this.window.setSize(800, 600);
 	}
 
 	/**
@@ -63,7 +67,9 @@ public class WollokGameObject {
 	 * @param component the visual component.
 	 */
 	public void addVisual(WollokObject wcomponent) {
-		this.board.addVisualComponent(new VisualComponent(wcomponent));
+		final Integer x = Integer.valueOf(wcomponent.call("position").call("x").toString());
+		final Integer y = Integer.valueOf(wcomponent.call("position").call("y").toString());
+		this.board.addComponent(new Actor(wcomponent), new Point(x, y));
 	}
 	
 	/**
@@ -73,7 +79,9 @@ public class WollokGameObject {
 	 * @param position a position.
 	 */
 	public void addVisualIn(WollokObject component, WollokObject position) {
-		component.call("position",position);
+		System.out.println("WARNING: addVisualIn method is deprecated. Create a position method on "
+				+ "the object you want to position and use addVisual instead.");
+		component.call("position", position);
 		this.addVisual(component);
 	}
 
@@ -82,10 +90,29 @@ public class WollokGameObject {
 	 */
 	public WollokObject allVisuals() {
 		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
-		this.board.getVisualComponets().forEach(component -> wcomponents.call("add", component.asWollokObject()));
+		this.board.getComponents().forEach(component -> wcomponents.call("add", component.asWollokObject()));
 		return wcomponents;
 	}
-
+	
+	/**
+	 * Gets the actor for this wollok object.
+	 * 
+	 * @param component
+	 */
+	private Actor getActor(WollokObject component){
+		return this.board.getComponents().stream().filter(actor -> actor.asWollokObject().equals(component)).findFirst().orElse(null);
+	}
+	
+	/**
+	 * 
+	 * @param component
+	 * @return
+	 */
+	public WollokObject hasVisual(WollokObject component) {
+		Actor actor = this.getActor(component);
+		return WollokJavaConversions.convertJavaToWollok(actor != null || this.board.hasComponent(actor));
+	}
+	
 	/**
 	 * Returns a position for given coordinates.
 	 * 
@@ -143,29 +170,15 @@ public class WollokGameObject {
 	 * 
 	 * @param background
 	 */
-	public void background(WollokObject path) {
-		this.board.setBackgroundImage(path.toString());
-	}
-
-	/**
-	 * Gets the background image.
-	 */
-	public WollokObject background() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getBackgroundImage().getPath());
+	public void ground(WollokObject path) {
+		this.board.setBackground(path.toString());
 	}
 
 	/**
 	 * Sets the cell background image.
 	 */
-	public void ground(WollokObject path) {
-		this.board.setCellsBackground(path.toString());
-	}
-
-	/**
-	 * Gets the cell background image.
-	 */
-	public WollokObject ground() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getCellsBackground().getPath());
+	public void boardGround(WollokObject path) {
+		this.board.setGround(path.toString());
 	}
 
 	/**
@@ -262,7 +275,8 @@ public class WollokGameObject {
 	 * @param message
 	 */
 	public void say(WollokObject component, WollokObject message) {
-		window.add(new Balloon(component, message));
+		final Actor actor = this.getActor(component);
+		actor.add(new Balloon(actor, message.toString()));
 	}
 	
 	/**
@@ -276,27 +290,27 @@ public class WollokGameObject {
 	/**
 	 * Ends the game, and close the window.
 	 */
-	public void end() {
+	public void stop() {
 		this.gameloop.end();
 		this.window.close();
 	}
 
 	/**
-	 * Render hook.
+	 * Updates this component.
 	 * 
-	 * @param fps the current fps count.
-	 */
-	public void render(Integer fps) {
-		this.window.render(fps);
-	}
-
-	/**
-	 * Update hook
-	 * 
-	 * @param time the current time.
+	 * @param time the elapsed time.
 	 */
 	public void update(Double time) {
 		this.board.update(time);
+	}
+
+	/**
+	 * Render this component.
+	 * 
+	 * @param fps the current FPS count.
+	 */
+	public void render(Integer fps) {
+		this.window.render(fps, this.board);
 	}
 
 }

@@ -1,4 +1,4 @@
-package ui;
+package ui.texture;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,7 +13,7 @@ import javax.imageio.ImageIO;
  * @version 1.0
  * @author 51lv3str1 - <a href="https://github.com/51lv3str1">https://github.com/51lv3str1</a>
  */
-public class Image implements ImageBasedGraphics {
+public class Image implements Texture {
 
 	/**
 	 * The path of this image file.
@@ -113,9 +113,14 @@ public class Image implements ImageBasedGraphics {
 		return new Image(this.asBufferedImage().getSubimage(x, y, width, height));
 	}
 	
+	/**
+	 * Updates this component.
+	 * 
+	 * @param time the elapsed time.
+	 */
 	@Override
 	public void update(Double time) {
-
+		
 	}
-
+	
 }

@@ -1,4 +1,4 @@
-package ui.graphics;
+package ui.settings;
 
 public interface GraphicSettings {
 

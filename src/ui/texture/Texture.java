@@ -1,8 +1,10 @@
-package ui;
+package ui.texture;
 
 import java.awt.image.BufferedImage;
 
-public interface ImageBasedGraphics extends Renderable {
+import component.Updatable;
+
+public interface Texture extends Updatable {
 
 	public BufferedImage asBufferedImage();
 

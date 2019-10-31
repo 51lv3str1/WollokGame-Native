@@ -8,55 +8,72 @@ import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
+import component.Board;
 import input.InputListener;
 import input.KeyInput;
 import input.Keyboard;
-import ui.graphics.GraphicsRenderer;
 import ui.menus.Menu;
 import ui.menus.MenuItem;
 import ui.menus.ShowGridMenuItem;
-import wollokGame.Board;
 
 public class Window implements WindowListener, ComponentListener, InputListener {
 
+	/**
+	 * The Window instance.
+	 */
+	private static Window instance;
+
 	private final JFrame frame;
+	private Canvas canvas;
 	private final JMenuBar menuBar;
 	private Map<String, Menu> menus = new HashMap<String, Menu>();
 	final Keyboard keyboard;
-	private Board board;
+	private String title = "My Wollok Game";
 
-	public Window(Board board, Integer width, Integer height) {
+	private Window() {
 		this.menuBar = new JMenuBar();
 		this.frame = new JFrame("My Wollok Game");
+		this.canvas = new Canvas();
 		this.frame.setJMenuBar(this.menuBar);
-		this.frame.setSize(width, height);
+		this.frame.add(this.canvas);
 		this.createMenus();
-		this.board = board;
-		this.add(board);
-		this.frame.setLocationRelativeTo(null);
 		this.frame.addWindowListener(this);
 		this.frame.addComponentListener(this);
 		this.keyboard = Keyboard.getInstance();
 		this.keyboard.addListener(this);
-		System.setProperty("sun.java2d.opengl", "false");
-		System.setProperty("sun.java2d.d3d", "false");
+	}
+
+	/**
+	 * Gets the GameDebugger instance.
+	 */
+	public static Window getInstance() {
+		if (instance == null) {
+			instance = new Window();
+		}
+
+		return instance;
+	}
+
+	/**
+	 * Changes the background color.
+	 */
+	public void setBackground(Color color) {
+		this.canvas.setBackground(color);
 	}
 
 	public void setSize(Integer width, Integer height) {
 		final Dimension dimension = new Dimension(width, height);
 		this.frame.setSize(dimension);
 		this.frame.setPreferredSize(dimension);
-		this.board.setSize(dimension);
-		this.board.setPreferredSize(dimension);
+		this.canvas.setSize(dimension);
+		this.canvas.setPreferredSize(dimension);
 	}
 
-	public void add(JComponent component) {
-		this.frame.add(component, 0);
-		this.frame.revalidate();
+	public geometry.Dimension getSize() {
+		return new geometry.Dimension(this.canvas.getSize());
 	}
 
 	public MenuItem getMenuItem(String menuName, String itemName) {
@@ -82,28 +99,26 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 		this.createMenuItem("File", "Exit", "Exit", this::close);
 		this.createMenu("Window");
 		this.createMenuItem("Window", "LOW", "Set Low Graphics setting", GraphicsRenderer::setLowGraphicsSetting);
-		this.createMenuItem("Window", "LOW", "Set Medium Graphics setting", GraphicsRenderer::setMediumGraphicsSetting);
-		this.createMenuItem("Window", "LOW", "Set High Graphics setting", GraphicsRenderer::setHighGraphicsSetting);
+		this.createMenuItem("Window", "Medium", "Set Medium Graphics setting", GraphicsRenderer::setMediumGraphicsSetting);
+		this.createMenuItem("Window", "High", "Set High Graphics setting", GraphicsRenderer::setHighGraphicsSetting);
 		this.createMenu("Debug");
 		this.addMenuItem("Debug", new ShowGridMenuItem());
 	}
 
 	public String getTitle() {
-		return this.frame.getTitle();
+		return this.title;
 	}
 
 	public void setTitle(String title) {
-		this.frame.setTitle(title);
-	}
-
-	private void resize() {
-		this.board.setSize(this.frame.getContentPane().getSize());
-		this.board.setPreferredSize(this.frame.getContentPane().getSize());
-		this.frame.revalidate();
+		this.title = title;
 	}
 
 	public void open() {
+		this.frame.setLocationRelativeTo(null);
+		this.frame.revalidate();
 		this.frame.setVisible(true);
+		this.canvas.createBufferStrategy(2);
+		this.canvas.revalidate();
 	}
 
 	public void close() {
@@ -111,7 +126,7 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 	}
 
 	public void listenKeyInput(KeyInput key) {
-		this.frame.addKeyListener(key);
+		this.canvas.addKeyListener(key);
 	}
 
 	public void listenMouseInput() {
@@ -173,7 +188,7 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 
 	@Override
 	public void componentResized(ComponentEvent arg0) {
-		this.resize();
+
 	}
 
 	@Override
@@ -182,12 +197,17 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 
 	}
 
-//	public void update(Double time) {
-//		this.board.revalidate();
-//	}
-
-	public void render(Integer fps) {
-		this.frame.repaint();
+	/**
+	 * Render this component.
+	 * 
+	 * @param fps the current FPS count.
+	 */
+	public void render(Integer fps, Board board) {
+		this.frame.setTitle(this.title + ": " + fps);
+		final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.canvas.getGraphics());
+		board.render(fps, graphicsRenderer);
+		this.canvas.show();
+		this.canvas.clear();
 	}
 
 }

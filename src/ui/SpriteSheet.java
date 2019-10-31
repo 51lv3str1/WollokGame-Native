@@ -1,5 +1,9 @@
 package ui;
 
+import ui.texture.Animation;
+import ui.texture.Image;
+import ui.texture.Sprite;
+
 public class SpriteSheet {
 	private final Image image;
 	private final Image[] chunks;
@@ -33,7 +37,7 @@ public class SpriteSheet {
 		return this.image;
 	}
 
-	protected Image getImage(Integer index) {
+	public Image getImage(Integer index) {
 		return this.chunks[index];
 	}
 

@@ -1,32 +1,32 @@
-package ui.graphics;
+package ui.settings;
 
 import static java.awt.RenderingHints.*;
 
-public class HighGraphicsSetting implements GraphicSettings {
+public class LowGraphicsSetting implements GraphicSettings {
 
 	@Override
 	public Object alphaInterpolation() {
-		return VALUE_ALPHA_INTERPOLATION_QUALITY;
+		return VALUE_ALPHA_INTERPOLATION_SPEED;
 	}
 
 	@Override
 	public Object antiliasing() {
-		return VALUE_ANTIALIAS_ON;
+		return VALUE_ANTIALIAS_OFF;
 	}
 
 	@Override
 	public Object interpolation() {
-		return VALUE_INTERPOLATION_BICUBIC;
+		return VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
 	}
 
 	@Override
 	public Object renderingQuality() {
-		return VALUE_RENDER_QUALITY;
+		return VALUE_RENDER_SPEED;
 	}
 
 	@Override
 	public Object textAntiLiasing() {
-		return VALUE_TEXT_ANTIALIAS_ON;
+		return VALUE_TEXT_ANTIALIAS_OFF;
 	}
 
 }

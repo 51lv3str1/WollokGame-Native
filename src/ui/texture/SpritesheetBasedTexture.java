@@ -1,18 +1,20 @@
-package ui;
+package ui.texture;
 
 import java.awt.image.BufferedImage;
 
-public abstract class SpritesheetBasedGraphics implements ImageBasedGraphics {
+import ui.SpriteSheet;
+
+public abstract class SpritesheetBasedTexture implements Texture {
 
 	private SpriteSheet spriteSheet;
 	private Integer index;
 
-	protected SpritesheetBasedGraphics(SpriteSheet spriteSheet) {
+	protected SpritesheetBasedTexture(SpriteSheet spriteSheet) {
 		this.setSpriteSheet(spriteSheet);
 		this.setIndex(0);
 	}
 
-	protected SpritesheetBasedGraphics(SpriteSheet spriteSheet, Integer index) {
+	protected SpritesheetBasedTexture(SpriteSheet spriteSheet, Integer index) {
 		this.setSpriteSheet(spriteSheet);
 		this.setIndex(index);
 	}

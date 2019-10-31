@@ -1,4 +1,4 @@
-package wollokGame;
+package debugger;
 
 /**
  * <p>An GameDebugger represents a debugging system for wollok-game testing purpose.</p>
