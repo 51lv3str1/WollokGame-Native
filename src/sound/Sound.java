@@ -1,4 +1,6 @@
-package audio;
+package sound;
+
+import static javax.sound.sampled.Clip.LOOP_CONTINUOUSLY;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,26 +11,27 @@ import javax.sound.sampled.Clip;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import org.uqbar.project.wollok.interpreter.core.WollokObject;
+
 /**
- * <p>An audio represents a sound file that can be played, paused, resume and can be stopped.</p>
+ * <p>
+ * A sound represents a sound file that can be played once, its stops at the end
+ * of its playback.
+ * </p>
  * 
  * @since 1.0
  * @version 1.0
  * @author 51lv3str1 - <a href="https://github.com/51lv3str1">https://github.com/51lv3str1</a>
- * @see Sound
- * @see BGM
  */
-public abstract class Audio {
-
-	/**
-	 * The File associated with this Audio.
-	 */
-	private File file;
+public class Sound {
+	
+	/** Wollok instance for this game. */
+	private final WollokObject wrapped;
 	
 	/**
-	 * The path of this audio file.
+	 * The File associated with this sound.
 	 */
-	private String path;
+	private File file;
 	
 	/**
 	 * The clip of this input stream.
@@ -36,21 +39,20 @@ public abstract class Audio {
 	private Clip clip;
 
 	/**
-	 * Constructs and initializes a Audio from a specific file path.
+	 * Constructs and initializes a Sound from a specific file path.
 	 * 
-	 * @param route the audio file route.
+	 * @param route the sound file route.
 	 */
-	public Audio(String route) {
-		this.path = route;
-		this.createAudioClip();
+	public Sound(WollokObject wrapped) {
+		this.wrapped = wrapped;
 	}
-
+	
 	/**
 	 * Creates a audio clip. 
 	 */
 	private void createAudioClip() {
 		try {
-			this.file = new File(this.path);
+			this.file = new File(this.getPath());
 			final AudioInputStream stream = AudioSystem.getAudioInputStream(this.file.toURI().toURL());
 			this.clip = AudioSystem.getClip();
 			this.clip.open(stream);
@@ -68,7 +70,7 @@ public abstract class Audio {
 			e.printStackTrace();
 		}
 	}
-
+	
 	/**
 	 * Gets the audio clip associated with this Audio.
 	 * 
@@ -81,19 +83,41 @@ public abstract class Audio {
 	/**
 	 * Gets the Image file path.
 	 * 
-	 * @return the file path of this image.
+	 * @return the file path of this sound.
 	 */
 	public String getPath() {
-		return this.path;
+		return this.wrapped.call("path").toString();
 	}
 
 	/**
-	 * Plays the audio.
-	 * 
-	 * @see Sound
-	 * @see BGM
+	 * Plays the audio once.
 	 */
-	public abstract void play();
+	public void play() {
+		if (this.getAudioClip() == null) {
+			this.createAudioClip();
+		}
+		
+		else {
+			this.getAudioClip().stop();
+		}
+
+		this.getAudioClip().start();
+	}
+
+	/**
+	 * Plays the audio in a continuously loop.
+	 */
+	public void loop() {
+		if (this.getAudioClip() == null) {
+			this.createAudioClip();
+		}
+		
+		else {
+			this.getAudioClip().stop();
+		}
+		
+		this.getAudioClip().loop(LOOP_CONTINUOUSLY);
+	}
 
 	/**
 	 * Pause the audio.

@@ -1,4 +1,6 @@
-package wollokGame;
+package game;
+
+import wollokGame.WollokGameObject;
 
 public class GameLoop implements Runnable {
 

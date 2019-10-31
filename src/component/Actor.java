@@ -34,7 +34,7 @@ public class Actor extends GameComponent implements Positionable {
 		this.createTexture();
 	}
 
-	public WollokObject asWollokObject() {
+	public WollokObject wrapper() {
 		return this.wollokObject;
 	}
 
@@ -69,8 +69,8 @@ public class Actor extends GameComponent implements Positionable {
 
 	@Override
 	public Point getBoardPosition() {
-		final Integer x = Integer.valueOf(this.asWollokObject().call("position").call("x").toString());
-		final Integer y = Integer.valueOf(this.asWollokObject().call("position").call("y").toString());
+		final Integer x = Integer.valueOf(this.wrapper().call("position").call("x").toString());
+		final Integer y = Integer.valueOf(this.wrapper().call("position").call("y").toString());
 		return new Point(x, y);
 	}
 
@@ -80,11 +80,11 @@ public class Actor extends GameComponent implements Positionable {
 		final WollokObject y = WollokJavaConversions.convertJavaToWollok(position.getY());
 		wposition.setReference("x", x);
 		wposition.setReference("y", y);
-		this.asWollokObject().call("position", wposition);
+		this.wrapper().call("position", wposition);
 	}
 
 	public void setBoardPosition(WollokObject position) {
-		this.asWollokObject().call("position", position);
+		this.wrapper().call("position", position);
 	}
 
 	public void translate(Integer x, Integer y) {
@@ -143,13 +143,13 @@ public class Actor extends GameComponent implements Positionable {
 	 * Creates a animation for this actor.
 	 */
 	private void createAnimation() {
-		final String path = this.asWollokObject().call("animation").call("spritesheet").call("path").toString();
-		final Integer rows = Integer.valueOf(this.asWollokObject().call("animation").call("spritesheet").call("rows").toString());
-		final Integer columns = Integer.valueOf(this.asWollokObject().call("animation").call("spritesheet").call("columns").toString());
+		final String path = this.wrapper().call("animation").call("spritesheet").call("path").toString();
+		final Integer rows = Integer.valueOf(this.wrapper().call("animation").call("spritesheet").call("rows").toString());
+		final Integer columns = Integer.valueOf(this.wrapper().call("animation").call("spritesheet").call("columns").toString());
 		final SpriteSheet spritesheet = new SpriteSheet(path, rows, columns);
-		final Boolean loop = Boolean.valueOf(this.asWollokObject().call("animation").call("loop").toString());
-		final Integer ratio = Integer.valueOf(this.asWollokObject().call("animation").call("ratio").toString());
-		final WollokObject frames = this.asWollokObject().call("animation").call("indexes");
+		final Boolean loop = Boolean.valueOf(this.wrapper().call("animation").call("loop").toString());
+		final Integer ratio = Integer.valueOf(this.wrapper().call("animation").call("ratio").toString());
+		final WollokObject frames = this.wrapper().call("animation").call("indexes");
 		final Integer[] indexes = new Integer[Integer.valueOf(frames.call("size").toString())];
 
 		for (int i = 0; i < indexes.length; i++) {
@@ -165,18 +165,18 @@ public class Actor extends GameComponent implements Positionable {
 	 * @param opacity a opacity value.
 	 */
 	private void createImage(Float opacity) {
-		this.texture = new Image(this.asWollokObject().call("image").toString(), opacity);
+		this.texture = new Image(this.wrapper().call("image").toString(), opacity);
 	}
 
 	/**
 	 * Creates a texture for this actor.
 	 */
 	private void createTexture() {
-		if (this.asWollokObject().hasProperty("image")) {
-			this.createImage(this.asWollokObject().hasProperty("opacity") ? Float.valueOf(this.asWollokObject().call("opacity").toString()) : 1.0F);
+		if (this.wrapper().hasProperty("image")) {
+			this.createImage(this.wrapper().hasProperty("opacity") ? Float.valueOf(this.wrapper().call("opacity").toString()) : 1.0F);
 		}
 
-		else if (this.asWollokObject().hasProperty("animation")) {
+		else if (this.wrapper().hasProperty("animation")) {
 			this.createAnimation();
 		}
 	}

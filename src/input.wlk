@@ -307,6 +307,25 @@ object keyboard {
 	const property windows = new KeyInput(code = 524)
 
 	const property contextMenu = new KeyInput(code = 525)
+	
+	const property keys = [cancel, backspace, tab, enter, clear, shift, ctrl, alt, pause, capsLock,
+		kana, final, kanji, escape, convert, noConvert, accept, modeChange, space, pageUp, pageDown,
+		end, home, left, up, right, down, comma, minus, period, slash, semicolon,
+		a, b, c, d, e, f, g, h, i, j, k, m, n, l, o, p, q, r, s, t, u, v, w, x, y, z,
+		openBracked, backSlash, closeBracket, numpad0, numpad1, numpad2, numpad3, numpad4, numpad5,
+		numpad6, numpad7, numpad8, numpad9, numpadAsterisk, numpadPlus, numpadComa, numpadMinus,
+		numpadDot, numpadSlash, f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11, f12, delete, deadGrave,
+		deadAcute, deadCircumflex, deadTilde, deadMacron, deadBreve, deadAboveDot, deadDieresis,
+		deadAboveRing, deadDoubleAcute, deadCaron, deadCedilla, deadOgonek, deadIota, deadVoicedSound,
+		deadSemivoicedSound, numLock, scrollLock, ampersand, asterisk, doubleQuote, less, propertyprintScreen,
+		insert, help, meta, greater, leftBrace, rightBrace, backQuote, quote, alphanumeric, katakana,
+		hiragana, fullWidth, halfWidth, romanCharacters, allCandidates, previousCandidates, codeInput,
+		japaneseKatakana, japaneseHiragana, japaneseRoman, kanaLock, imputconstOnOrOff, at, colon,
+		circunflex, dollar, euro, exclamationMark, jinvertedExclamationMark, leftParenthesis, numberSign,
+		plus, rightParenthesis, underscore, windows, contextMenu]
 
+	method clearEvents() {
+		keys.forEach({key => key.clear()})
+	}
 }
 

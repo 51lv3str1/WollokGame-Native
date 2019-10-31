@@ -9,7 +9,6 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 
 import component.Actor;
 import component.Balloon;
@@ -19,8 +18,6 @@ import component.Message;
 import debugger.GameDebugger;
 import geometry.Dimension;
 import geometry.Point;
-import geometry.Rotation;
-import geometry.Scale;
 import ui.settings.GraphicSettings;
 import ui.settings.HighGraphicsSetting;
 import ui.settings.LowGraphicsSetting;

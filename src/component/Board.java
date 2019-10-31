@@ -110,6 +110,10 @@ public class Board implements Renderable, Updatable {
 	public void addComponent(Actor component, Point position) {
 		this.cells[position.getX()][position.getY()].add(component);
 	}
+	
+	public void remove(Actor actor) {
+		
+	}
 
 	@Override
 	public void render(Integer fps, GraphicsRenderer graphicsRenderer) {
