@@ -15,9 +15,9 @@ import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 
-import component.Actor;
 import component.Balloon;
-import component.Board;
+import component.actor.Actor;
+import component.scene.Board;
 import game.GameLoop;
 import geometry.Point;
 import input.Keyboard;
@@ -51,7 +51,7 @@ public class WollokGameObject {
 		this.gameloop = new GameLoop(this);
 		this.board = new Board(8, 8);
 		this.window = Window.getInstance();
-		this.window.setSize(800, 600);
+		this.window.setDimension(800, 600);
 	}
 
 	/**
@@ -62,9 +62,7 @@ public class WollokGameObject {
 	 * @param component the visual component.
 	 */
 	public void addVisual(WollokObject wcomponent) {
-		final Integer x = Integer.valueOf(wcomponent.call("position").call("x").toString());
-		final Integer y = Integer.valueOf(wcomponent.call("position").call("y").toString());
-		this.board.addComponent(new Actor(wcomponent), new Point(x, y));
+		this.board.addComponent(new Actor(wcomponent));
 	}
 	
 	/**

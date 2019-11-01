@@ -11,7 +11,15 @@ package geometry;
 public class Point {
 
 	private final Pair<Integer, Integer> pair;
-	public static Point ORIGIN = new Point(0, 0);
+	public static Point ORIGIN = new Point();
+	
+	/**
+	 * Constructs and initializes a point at (0,0) location in the
+	 * coordinate space.
+	 */
+	public Point() {
+		this.pair = new Pair<Integer, Integer>(0, 0);
+	}
 
 	/**
 	 * Constructs and initializes a point at the specified (x,y) location in the

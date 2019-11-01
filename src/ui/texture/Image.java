@@ -122,5 +122,5 @@ public class Image implements Texture {
 	public void update(Double time) {
 		
 	}
-	
+
 }

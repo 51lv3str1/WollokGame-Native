@@ -19,6 +19,22 @@ class Point {
 
 class Position inherits Point {
 
+	method up(n) {
+		return new Position(x = x, y = y - n)
+	}
+
+	method down(n) {
+		return new Position(x = x, y = y + n)
+	}
+
+	method left(n) {
+		return new Position(x = x - n, y = y)
+	}
+
+	method right(n) {
+		return new Position(x = x + n, y = y)
+	}
+
 }
 
 class Dimension {

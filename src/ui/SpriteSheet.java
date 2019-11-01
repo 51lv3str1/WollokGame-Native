@@ -8,12 +8,12 @@ public class SpriteSheet {
 	private final Image image;
 	private final Image[] chunks;
 
-	public SpriteSheet(String path, Integer rows, Integer columns) {
+	public SpriteSheet(String path, Integer columns, Integer rows) {
 		this.image = new Image(path);
 		this.chunks = this.createChunks(rows, columns);
 	}
 
-	private Image[] createChunks(Integer rows, Integer columns) {
+	private Image[] createChunks(Integer columns, Integer rows) {
 		final Integer size = rows * columns;
 		final Image chunks[] = new Image[size];
 		Integer x = 0;

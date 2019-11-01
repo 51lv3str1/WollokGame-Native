@@ -11,7 +11,8 @@ import java.util.Map;
 import javax.swing.JFrame;
 import javax.swing.JMenuBar;
 
-import component.Board;
+import component.scene.Board;
+import geometry.Dimensionable;
 import input.InputListener;
 import input.KeyInput;
 import input.Keyboard;
@@ -19,7 +20,7 @@ import ui.menus.Menu;
 import ui.menus.MenuItem;
 import ui.menus.ShowGridMenuItem;
 
-public class Window implements WindowListener, ComponentListener, InputListener {
+public class Window implements Dimensionable, WindowListener, ComponentListener, InputListener {
 
 	/**
 	 * The Window instance.
@@ -63,8 +64,15 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 	public void setBackground(Color color) {
 		this.canvas.setBackground(color);
 	}
+	
+	public void setDimension(geometry.Dimension dimension) {
+		this.frame.setSize(dimension.asAWT());
+		this.frame.setPreferredSize(dimension.asAWT());
+		this.canvas.setSize(dimension.asAWT());
+		this.canvas.setPreferredSize(dimension.asAWT());
+	}
 
-	public void setSize(Integer width, Integer height) {
+	public void setDimension(Integer width, Integer height) {
 		final Dimension dimension = new Dimension(width, height);
 		this.frame.setSize(dimension);
 		this.frame.setPreferredSize(dimension);
@@ -72,7 +80,7 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 		this.canvas.setPreferredSize(dimension);
 	}
 
-	public geometry.Dimension getSize() {
+	public geometry.Dimension getDimension() {
 		return new geometry.Dimension(this.canvas.getSize());
 	}
 
@@ -205,7 +213,7 @@ public class Window implements WindowListener, ComponentListener, InputListener 
 	public void render(Integer fps, Board board) {
 		this.frame.setTitle(this.title + ": " + fps);
 		final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.canvas.getGraphics());
-		board.render(fps, graphicsRenderer);
+		board.render(graphicsRenderer);
 		this.canvas.show();
 		this.canvas.clear();
 	}

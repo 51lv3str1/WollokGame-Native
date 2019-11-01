@@ -1,8 +1,8 @@
 class Spritesheet {
 
 	const property path
-	const property rows
 	const property columns
+	const property rows
 
 	method animation(loop, ratio, indexes...) {
 		return new Animation(spritesheet = self, loop = loop, ratio = ratio, indexes = indexes)

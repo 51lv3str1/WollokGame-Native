@@ -9,6 +9,6 @@ public interface Renderable {
 	 * 
 	 * @param fps the current FPS count.
 	 */
-	public void render(Integer fps, GraphicsRenderer graphicsRenderer);
+	public void render(GraphicsRenderer graphicsRenderer);
 	
 }

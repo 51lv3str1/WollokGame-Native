@@ -64,10 +64,10 @@ object wollokGame {
 	 */
 	method addVisualCharacter(component) {
 		self.addVisual(component)
-		keyboard.left().onKeyPressedDo({ component.position(self.at(component.position().x() - 1, component.position().y()))})
-		keyboard.up().onKeyPressedDo({ component.position(self.at(component.position().x(), component.position().y() - 1))})
-		keyboard.right().onKeyPressedDo({ component.position(self.at(component.position().x() + 1, component.position().y()))})
-		keyboard.down().onKeyPressedDo({ component.position(self.at(component.position().x(), component.position().y() + 1))})
+		keyboard.left().onKeyPressedDo({component.position(component.position().left(1))})
+		keyboard.up().onKeyPressedDo({component.position(component.position().up(1))})
+		keyboard.right().onKeyPressedDo({component.position(component.position().right(1))})
+		keyboard.down().onKeyPressedDo({component.position(component.position().down(1))})
 	}
 
 	/**
@@ -290,17 +290,10 @@ object wollokGame {
 	 * 
 	 * @param path the image path.
 	 * @param rows the rows that conform the spritesheet.
-	 * @param columns thee columns that conforms the spritesheet.
+	 * @param columns the columns that conforms the spritesheet.
 	 */
-	method createSpritesheet(path, rows, columns) {
-		return new Spritesheet(path = path, rows = rows, columns = columns)
-	}
-
-	/** 
-	 * @private
-	 */
-	method doStart(isRepl) {
-	// TODO
+	method createSpritesheet(path, columns, rows) {
+		return new Spritesheet(path = path, columns = columns, rows = rows)
 	}
 
 }

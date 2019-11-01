@@ -6,22 +6,26 @@ import input.*
 object duba {
 
 	var property position = wollokGame.at(1,1)
-	var spritesheet = wollokGame.createSpritesheet("assets/duba.png", 15, 10)
-	var property animation = spritesheet.animation(true, 
-		3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 35, 36, 37,
-		38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0,
-		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34,
-		35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-		0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22,
-		23, 23, 23, 24, 25, 26, 27, 27, 28, 29, 30, 31, 31, 31, 31, 31, 32, 0, 0, 0, 0, 0
+	var spritesheet = wollokGame.createSpritesheet("assets/duba.png", 10, 15)
+	var property animation = spritesheet.animation(true, 3,
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+		 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 12, 12, 13, 14, 15, 16,
+		 17, 18, 19, 19, 20, 21, 22, 23, 23, 23, 24, 25, 26, 27, 27, 28,
+		 29, 30, 31, 31, 31, 31, 31, 32,
+		 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 	)
 	
 	method initialize() {
-		keyboard.left().onKeyPressedDo({self.position(wollokGame.at(self.position().x() - 1, self.position().y()))})
-		keyboard.up().onKeyPressedDo({self.position(wollokGame.at(self.position().x(), self.position().y() - 1))})
-		keyboard.right().onKeyPressedDo({self.position(wollokGame.at(self.position().x() + 1, self.position().y()))})
-		keyboard.down().onKeyPressedDo({self.position(wollokGame.at(self.position().x(), self.position().y() + 1))})
+		keyboard.left().onKeyPressedDo({ position = self.position().left(1)})
+		keyboard.up().onKeyPressedDo({ position = self.position().up(1)})
+		keyboard.right().onKeyPressedDo({ position = self.position().right(1)})
+		keyboard.down().onKeyPressedDo({ position = self.position().down(1)})
 	}
 
 }

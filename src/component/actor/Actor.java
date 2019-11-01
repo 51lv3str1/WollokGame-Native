@@ -1,4 +1,4 @@
-package component;
+package component.actor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,9 @@ import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 
+import component.GameComponent;
+import component.Positionable;
 import geometry.Point;
-import geometry.Scale;
 import ui.GraphicsRenderer;
 import ui.SpriteSheet;
 import ui.texture.Image;
@@ -23,7 +24,6 @@ public class Actor extends GameComponent implements Positionable {
 	private final WollokInterpreter interpreter;
 	private final WollokInterpreterEvaluator evaluator;
 	private Texture texture;
-	private Board board;
 	private List<GameComponent> components;
 
 	public Actor(WollokObject wollokObject) {
@@ -46,14 +46,6 @@ public class Actor extends GameComponent implements Positionable {
 		return this.evaluator;
 	}
 	
-	public Cell getCell() {
-		return this.board.getCellAt(this.getBoardPosition());
-	}
-	
-	public void setBoard(Board board) {
-		this.board = board;
-	}
-	
 	public List<GameComponent> getComponents() {
 		return this.components;
 	}
@@ -62,11 +54,6 @@ public class Actor extends GameComponent implements Positionable {
 		this.getComponents().add(component);
 	}
 	
-	@Override
-	public Point getPosition() {
-		return this.board.getCellAt(this.getBoardPosition()).getPosition();
-	}
-
 	@Override
 	public Point getBoardPosition() {
 		final Integer x = Integer.valueOf(this.wrapper().call("position").call("x").toString());
@@ -86,58 +73,6 @@ public class Actor extends GameComponent implements Positionable {
 	public void setBoardPosition(WollokObject position) {
 		this.wrapper().call("position", position);
 	}
-
-	public void translate(Integer x, Integer y) {
-		
-	}
-	
-	@Override
-	public void translate(Point position) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void translateTo(Integer x, Integer y) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void translateTo(Point position) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void translateTo(WollokObject position) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-//	public void translate(Point position) {
-//		this.setBoardPosition(this.getBoardPosition().translate(position));
-//	}
-//
-//	public void translate(WollokObject position) {
-//		final Integer x = Integer.valueOf(position.call("x").toString());
-//		final Integer y = Integer.valueOf(position.call("y").toString());
-//		this.translate(new Point(x, y));
-//	}
-//
-//	public void translateTo(Integer x, Integer y) {
-//		this.translate(x - this.getBoardPosition().getX(), y - this.getBoardPosition().getY());
-//	}
-//
-//	public void translateTo(Point point) {
-//		this.translateTo(point.getX(), point.getY());
-//	}
-//
-//	public void translateTo(WollokObject position) {
-//		final Integer x = Integer.valueOf(position.call("x").toString());
-//		final Integer y = Integer.valueOf(position.call("y").toString());
-//		this.translateTo(x, y);
-//	}
 
 	/**
 	 * Creates a animation for this actor.
@@ -188,77 +123,15 @@ public class Actor extends GameComponent implements Positionable {
 		return this.texture.equals(null) ? DEFAULT_TEXTURE : this.texture;
 	}
 	
-	public Boolean canTranslate(Point position) {
-		return position.getX() >= 0 && position.getX() <= this.board.getColumns() 
-				&& position.getY() >= 0 && position.getY() <= this.board.getRows();
-	}
-
-	public Point getAvailableNeighborPosition() {
-		
-		if (this.canTranslate(new Point(this.getCell().getBoardPosition().getX() + 1,this.getCell().getBoardPosition().getY()))) {
-			return this.getCell().onEast().getPosition();
-		}
-		
-		if (this.canTranslate(new Point(this.getCell().getBoardPosition().getX() - 1, this.getCell().getBoardPosition().getY()))) {
-			return this.getCell().onWest().getPosition();
-		}
-		
-		if (this.canTranslate(new Point(this.getCell().getBoardPosition().getX(), this.getCell().getBoardPosition().getY() - 1))) {
-			return this.getCell().onNorth().getPosition();
-		}
-		
-		if (this.canTranslate(new Point(this.getCell().getBoardPosition().getX(),this.getCell().getBoardPosition().getY() + 1))) {
-			return this.getCell().onSouth().getPosition();
-		}
-		
-		return null;
-	}
-
 	@Override
-	public void render(Integer fps, GraphicsRenderer graphicsRenderer) {
-		graphicsRenderer.render(this);
-		this.getComponents().forEach(component ->  graphicsRenderer.render(fps, component));
+	public void render(GraphicsRenderer graphicsRenderer) {
+		this.getComponents().forEach(component ->  graphicsRenderer.render(component));
 	}
 
 	@Override
 	public void update(Double time) {
 		this.getTexture().update(time);
-	}
-
-	@Override
-	public void rotate(Double theta) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void rotate(Double theta, Point vector) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void rotate(Double theta, Integer x, Integer y) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void rotateAboutCenter(Double theta) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void scale(Integer x, Integer y) {
-		// TODO Apéndice de método generado automáticamente
-		
-	}
-
-	@Override
-	public void scale(Scale scale) {
-		// TODO Apéndice de método generado automáticamente
-		
+		this.getComponents().forEach(component ->  component.update(time));
 	}
 
 }

@@ -10,11 +10,11 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import component.Actor;
 import component.Balloon;
-import component.Cell;
 import component.GameComponent;
 import component.Message;
+import component.actor.Actor;
+import component.scene.Cell;
 import debugger.GameDebugger;
 import geometry.Dimension;
 import geometry.Point;
@@ -113,9 +113,10 @@ public class GraphicsRenderer {
 	 * 
 	 * @param actor the actor to be rendered.
 	 */
-	public void render(Actor actor) {
+	public void render(Actor actor, Point position, Dimension dimension) {
 		this.graphics.setComposite(AlphaComposite.getInstance(SRC_OVER, actor.getTexture().getOpacity()));
-		this.render(actor.getTexture(), actor.getCell().getPosition(), actor.getCell().getDimension());
+		this.render(actor.getTexture(), position, dimension);
+		actor.render(this);
 	}
 
 	/**
@@ -123,20 +124,19 @@ public class GraphicsRenderer {
 	 * 
 	 * @param cell the cell to be rendered.
 	 */
-	public void render(Cell cell) {
+	public void render(Cell cell, Point position, Dimension dimension) {
 		final GameDebugger debugger = GameDebugger.getInstance();
 
 		if (cell.getBoard().hasBackground()) {
-			this.render(cell.getBoard().getBackgroundSubimage(cell.getIndex()), cell.getPosition(), cell.getDimension());
+			this.render(cell.getBoard().getBackgroundSubimage(cell.getIndex()), position, dimension);
 		}
 		
 		else {
-			this.render(cell.getImage(), cell.getPosition(), cell.getDimension());
+			this.render(cell.getImage(), position, dimension);
 		}
 
 		if (debugger.isShowingGrid()) {
-			this.graphics.drawRect(cell.getPosition().getX(), cell.getPosition().getY(),
-					cell.getDimension().getWidth(), cell.getDimension().getHeight());
+			this.graphics.drawRect(position.getX(), position.getY(), dimension.getWidth(), dimension.getHeight());
 		}
 		
 	}
@@ -147,9 +147,9 @@ public class GraphicsRenderer {
 	 * @param message the message to be rendered.
 	 */
 	public void render(Message message) {
-		this.graphics.setColor(message.getColor().asAWT());
-		this.graphics.setFont(message.getFont());
-		this.graphics.drawString(message.getText(), message.getPosition().getX(), message.getPosition().getY());
+//		this.graphics.setColor(message.getColor().asAWT());
+//		this.graphics.setFont(message.getFont());
+//		this.graphics.drawString(message.getText(), message.getPosition().getX(), message.getPosition().getY());
 	}
 
 	/**
@@ -158,20 +158,20 @@ public class GraphicsRenderer {
 	 * @param balloon the balloon to be rendered.
 	 */
 	public void render(Balloon balloon) {
-		final FontMetrics metrics = this.graphics.getFontMetrics(balloon.getFont());
-		final Point position = balloon.getSpeecher().getAvailableNeighborPosition();
-		final Rectangle bounds = new Rectangle(position.getX(), position.getY(), metrics.stringWidth(balloon.getMessageText()) + 10, metrics.getHeight() * 2);
-		final int boundsRoundBorder = 20;
-		final int messageX = bounds.x + (bounds.width - metrics.stringWidth(balloon.getMessageText())) / 2;
-		final int messageY = bounds.y + ((bounds.height - metrics.getHeight()) / 2) + metrics.getAscent();
-		this.graphics.setColor(WHITE.asAWT());
-		this.graphics.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, boundsRoundBorder, boundsRoundBorder);
-		balloon.setPosition(new Point(messageX, messageY));
-		this.render(balloon.getMessage());
+//		final FontMetrics metrics = this.graphics.getFontMetrics(balloon.getFont());
+//		final Point position = balloon.getSpeecher().getAvailableNeighborPosition();
+//		final Rectangle bounds = new Rectangle(position.getX(), position.getY(), metrics.stringWidth(balloon.getMessageText()) + 10, metrics.getHeight() * 2);
+//		final int boundsRoundBorder = 20;
+//		final int messageX = bounds.x + (bounds.width - metrics.stringWidth(balloon.getMessageText())) / 2;
+//		final int messageY = bounds.y + ((bounds.height - metrics.getHeight()) / 2) + metrics.getAscent();
+//		this.graphics.setColor(WHITE.asAWT());
+//		this.graphics.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, boundsRoundBorder, boundsRoundBorder);
+//		balloon.setPosition(new Point(messageX, messageY));
+//		this.render(balloon.getMessage());
 	}
 
-	public void render(Integer fps, GameComponent component) {
-		component.render(fps, this);
+	public void render(GameComponent component) {
+		component.render(this);
 	}
 
 }
