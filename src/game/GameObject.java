@@ -97,16 +97,30 @@ public class GameObject {
 	 * Returns board height (in cells).
 	 */
 	public WollokObject height() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getColumns());
+		return WollokJavaConversions.convertJavaToWollok(this.board.getRows());
+	}
+	
+	/**
+	 * Sets board height (in cells).
+	 */
+	public void height(WollokObject height) {
+		this.board.setRows(Integer.valueOf(height.toString()));
 	}
 
 	/**
 	 * Returns board width (in cells).
 	 */
-	public WollokObject getWidth() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getRows());
+	public WollokObject width() {
+		return WollokJavaConversions.convertJavaToWollok(this.board.getColumns());
 	}
-
+	
+	/**
+	 * Sets board width (in cells).
+	 */
+	public void width(WollokObject width) {
+		this.board.setColumns(Integer.valueOf(width.toString()));
+	}
+	
 	/**
 	 * Returns the game title.
 	 */
@@ -168,7 +182,7 @@ public class GameObject {
 	/**
 	 * Starts the game.
 	 */
-	public void start() {
+	public void start() {	
 		this.window.open();
 		this.gameloop.run();
 	}

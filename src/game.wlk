@@ -168,6 +168,7 @@ object game {
 	 */
 	method getObjectsIn(position) {
 	// TODO
+		return []
 	}
 
 	/**

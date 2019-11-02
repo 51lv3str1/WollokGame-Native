@@ -18,8 +18,8 @@ public class Board extends Scene {
 	private static final Image TEXTURE = new Image("assets/ground.png");
 
 	private final Cell[] cells;
-	private final Integer rows;
-	private final Integer columns;
+	private Integer rows;
+	private Integer columns;
 	private final List<Actor> components;
 	private Image ground;
 	private SpriteSheet background;
@@ -50,9 +50,17 @@ public class Board extends Scene {
 	public Integer getColumns() {
 		return this.columns;
 	}
+	
+	public void setColumns(Integer columns) {
+		this.columns = columns;
+	}
 
 	public Integer getRows() {
 		return this.rows;
+	}
+	
+	public void setRows(Integer rows) {
+		this.rows = rows;
 	}
 
 	public Boolean hasBackground() {
