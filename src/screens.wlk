@@ -35,6 +35,7 @@ class LevelButton {
 
 	var level
 	var property selected = false
+	var property position = game.at(0,0)
 
 	method level() = level
 
@@ -68,6 +69,7 @@ class Screen {
 class Image {
 
 	var property name
+	var property position = game.at(0,0)
 
 	method image() = name + ".png"
 
@@ -151,7 +153,8 @@ object menu inherits Screen {
 	}
 
 	override method show() {
-		game.addVisualIn(new Image(name = "title"), game.center().left(4).up(2))
+		var title = new Image(name = "title", position = game.center().left(4).up(2))
+		game.addVisual(title)
 		var nextPosition = game.center().left(3).down(7)
 		self.buttons().forEach({ button =>
 			game.addVisualIn(button, nextPosition)
