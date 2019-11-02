@@ -179,8 +179,8 @@ object example {
 		game.addVisualIn(churrasco2, game.at(2, 6))
 		game.addVisualIn(churrasco3, game.at(6, 6))
 		game.addVisual(duba)
-		game.sound("assets/BGM.wav").loop()
 		game.start()
+		game.sound("assets/BGM.wav").loop()
 	}
 
 }
