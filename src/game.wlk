@@ -166,11 +166,8 @@ object game {
 	 * Example:
 	 *     game.getObjectsIn(game.origin())
 	 */
-	method getObjectsIn(position) {
-	// TODO
-		return []
-	}
-
+	method getObjectsIn(position) native
+	
 	/**
 	 * Draws a dialog balloon with a message in given visual object position.
 	 * 

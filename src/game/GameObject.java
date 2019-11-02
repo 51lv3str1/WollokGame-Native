@@ -79,8 +79,12 @@ public class GameObject {
 	 * Returns all visual objects added to the board.
 	 */
 	public WollokObject allVisuals() {
+		return toWollokListObject(this.board.getComponents());
+	}
+
+	private WollokObject toWollokListObject(List<Actor> actors) {
 		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
-		this.board.getComponents().forEach(component -> wcomponents.call("add", component.wrapper()));
+		actors.forEach(component -> wcomponents.call("add", component.wrapper()));
 		return wcomponents;
 	}
 	
@@ -149,6 +153,16 @@ public class GameObject {
 	 */
 	public void boardGround(WollokObject path) {
 		this.board.setGround(path.toString());
+	}
+	
+	/**
+	 * Returns all objects in given position.
+	 * 
+	 * Example:
+	 *     game.getObjectsIn(game.origin())
+	 */
+	public WollokObject getObjectsIn(WollokObject position) {
+		return toWollokListObject(board.getComponentsInPoint(new Point(position)));
 	}
 
 	/**

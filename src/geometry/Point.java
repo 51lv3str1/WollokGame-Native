@@ -1,5 +1,7 @@
 package geometry;
 
+import org.uqbar.project.wollok.interpreter.core.WollokObject;
+
 /**
  * A point representing a location in (x,y) coordinate space, specified in
  * Integer precision.
@@ -29,6 +31,19 @@ public class Point {
 	 * @param y the Y coordinate of the newly constructed Point.
 	 */
 	public Point(Integer x, Integer y) {
+		this.pair = new Pair<Integer, Integer>(x, y);
+	}
+	
+	/**
+	 * Constructs and initializes a point at the specified (x,y) location in the
+	 * coordinate space.
+	 * 
+	 * @param x the X coordinate of the newly constructed Point.
+	 * @param y the Y coordinate of the newly constructed Point.
+	 */
+	public Point(WollokObject position) {
+		final Integer x = Integer.valueOf(position.call("x").toString());
+		final Integer y = Integer.valueOf(position.call("y").toString());
 		this.pair = new Pair<Integer, Integer>(x, y);
 	}
 

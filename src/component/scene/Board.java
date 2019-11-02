@@ -3,6 +3,7 @@ package component.scene;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import component.actor.Actor;
 import game.Collisions;
@@ -123,6 +124,12 @@ public class Board extends Scene {
 
 	public void addComponent(Actor component) {
 		this.getComponents().add(component);
+	}
+	
+	public List<Actor> getComponentsInPoint(Point point){
+		return this.getComponents().stream().
+				filter(component -> component.getBoardPosition().equals(point)).
+				collect(Collectors.toList());
 	}
 
 	public void remove(Actor actor) {
