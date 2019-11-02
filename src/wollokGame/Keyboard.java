@@ -1,4 +1,4 @@
-package input;
+package wollokGame;
 
 import java.util.ArrayList;
 import java.util.List;

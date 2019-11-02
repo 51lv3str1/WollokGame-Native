@@ -1,4 +1,4 @@
-package sound;
+package wollokGame;
 
 import static javax.sound.sampled.Clip.LOOP_CONTINUOUSLY;
 

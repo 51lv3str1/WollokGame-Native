@@ -14,12 +14,12 @@ import javax.swing.JMenuBar;
 
 import component.scene.Board;
 import geometry.Dimensionable;
-import input.InputListener;
-import input.KeyInput;
-import input.Keyboard;
 import ui.menus.Menu;
 import ui.menus.MenuItem;
 import ui.menus.ShowGridMenuItem;
+import wollokGame.InputListener;
+import wollokGame.KeyInput;
+import wollokGame.Keyboard;
 
 public class Window implements Dimensionable, WindowListener, ComponentListener, InputListener {
 

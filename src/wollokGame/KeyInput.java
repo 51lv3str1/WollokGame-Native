@@ -1,4 +1,4 @@
-package input;
+package wollokGame;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

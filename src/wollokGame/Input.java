@@ -1,4 +1,4 @@
-package input;
+package wollokGame;
 
 public interface Input {
 

@@ -20,7 +20,6 @@ import component.actor.Actor;
 import component.scene.Board;
 import game.GameLoop;
 import geometry.Point;
-import input.Keyboard;
 import ui.Window;
 
 @SuppressWarnings({ "unused" })

@@ -1,6 +1,4 @@
-import geometry.*
 import wollokGame.*
-import input.*
 
 class Obstacle {
 
@@ -186,4 +184,3 @@ object example {
 	}
 
 }
-
