@@ -153,7 +153,7 @@ object duba {
 	
 	method eat() {
 		animation = eatAnimation
-		wollokGame.schedule(1000, {self.animation(idleAnimation)})
+		wollokGame.schedule(885, {self.animation(idleAnimation)})
 	}
 
 	method initialize() {

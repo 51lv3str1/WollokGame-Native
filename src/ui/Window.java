@@ -1,6 +1,7 @@
 package ui;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
@@ -28,10 +29,10 @@ public class Window implements Dimensionable, WindowListener, ComponentListener,
 	private static Window instance;
 
 	private final JFrame frame;
-	private Canvas canvas;
+	private final Canvas canvas;
 	private final JMenuBar menuBar;
-	private Map<String, Menu> menus = new HashMap<String, Menu>();
-	final Keyboard keyboard;
+	private final Map<String, Menu> menus = new HashMap<String, Menu>();
+	private final Keyboard keyboard;
 	private String title = "My Wollok Game";
 
 	private Window() {
@@ -211,8 +212,10 @@ public class Window implements Dimensionable, WindowListener, ComponentListener,
 	 * @param fps the current FPS count.
 	 */
 	public void render(Integer fps, Board board) {
+		
+		final Graphics2D graphics = this.canvas.getGraphics();
 		this.frame.setTitle(this.title + ": " + fps);
-		final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.canvas.getGraphics());
+		final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(graphics);
 		board.render(graphicsRenderer);
 		this.canvas.show();
 		this.canvas.clear();
