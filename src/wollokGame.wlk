@@ -124,7 +124,7 @@ object wollokGame {
 	 *     game.onCollideDo(pepita, { comida => pepita.comer(comida) })
 	 */
 	method onCollideDo(visual, action) {
-	// TODO	
+		self.whenCollideDo(visual, action)
 	}
 	
 	method removeCollisionEvent(visual) native
