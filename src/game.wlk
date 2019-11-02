@@ -1,7 +1,7 @@
 import ui.*
 import scheduler.*
 
-object wollokGame {
+object game {
 
 	/**
 	 * Adds an object to the board for drawing it.

@@ -1,17 +1,15 @@
 package game;
 
-import wollokGame.WollokGameObject;
-
 public class GameLoop implements Runnable {
 
 	private volatile Thread loopThread = new Thread(this);
-	private final WollokGameObject game;
+	private final GameObject game;
 	private Boolean isRunning = false;
 	private Integer fpsCount = 0;
 	private Integer fps = 60;
 	private Integer ups = 60;
 
-	public GameLoop(WollokGameObject game) {
+	public GameLoop(GameObject game) {
 		this.loopThread.setDaemon(true);
 		this.game = game;
 	}

@@ -5,13 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import component.actor.Actor;
+import game.Collisions;
 import geometry.Dimension;
 import geometry.Point;
 import ui.GraphicsRenderer;
 import ui.SpriteSheet;
 import ui.layout.GridLayout;
 import ui.texture.Image;
-import wollokGame.Collisions;
 
 public class Board extends Scene {
 

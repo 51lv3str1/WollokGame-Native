@@ -1,4 +1,4 @@
-package wollokGame;
+package game;
 
 import static java.awt.Font.*;
 
@@ -18,12 +18,11 @@ import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 import component.Balloon;
 import component.actor.Actor;
 import component.scene.Board;
-import game.GameLoop;
 import geometry.Point;
 import ui.Window;
 
 @SuppressWarnings({ "unused" })
-public class WollokGameObject {
+public class GameObject {
 
 	/** Wollok instance for this game. */
 	private final WollokObject wrapped;
@@ -43,7 +42,7 @@ public class WollokGameObject {
 	/** The current board. */
 	private Board board;
 
-	public WollokGameObject(WollokObject wrapped) {
+	public GameObject(WollokObject wrapped) {
 		this.wrapped = wrapped;
 		this.interpreter = WollokInterpreter.getInstance();
 		this.evaluator = (WollokInterpreterEvaluator) interpreter.getEvaluator();
