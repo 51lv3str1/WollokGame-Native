@@ -4,7 +4,6 @@ import ui.*
 import scheduler.*
 import sound.*
 
-
 object wollokGame {
 
 	/**
@@ -113,9 +112,7 @@ object wollokGame {
 	 * Example:
 	 *     game.whenCollideDo(pepita, { comida => pepita.comer(comida) })
 	 */
-	method whenCollideDo(visual, action) {
-	// TODO
-	}
+	method whenCollideDo(visual, action) native
 
 	/**
 	 * Adds a block that will be executed exactly when the given object collides with other. 
@@ -129,6 +126,8 @@ object wollokGame {
 	method onCollideDo(visual, action) {
 	// TODO	
 	}
+	
+	method removeCollisionEvent(visual) native
 
 	/**
 	 * Adds a block with a specific name that will be executed every n

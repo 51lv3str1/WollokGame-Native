@@ -62,7 +62,7 @@ public class WollokGameObject {
 	 * @param component the visual component.
 	 */
 	public void addVisual(WollokObject wcomponent) {
-		this.board.addComponent(new Actor(wcomponent));
+		this.board.addComponent(new Actor(wcomponent, this.board));
 	}
 	
 	/**
@@ -148,6 +148,23 @@ public class WollokGameObject {
 	public void say(WollokObject component, WollokObject message) {
 		final Actor actor = this.getActor(component);
 		actor.add(new Balloon(actor, message.toString()));
+	}
+	
+	/**
+	 * Adds a block that will be executed exactly when the given object collides with other. 
+	 * Two objects collide when are in the same position.
+	 * 
+	 * The block should expect the other object as parameter.
+	 * 
+	 * Example:
+	 *     game.onCollideDo(pepita, { comida => pepita.comer(comida) })
+	 */
+	public void whenCollideDo(WollokObject visual, WollokObject action) {
+		Collisions.getInstance().listenCollisionWithAny(visual, action);
+	}
+	
+	public void removeCollisionEvent(WollokObject visual){
+		Collisions.getInstance().stopListeningCollisionWithAny(visual);
 	}
 	
 	/**

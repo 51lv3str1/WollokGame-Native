@@ -11,6 +11,7 @@ import ui.GraphicsRenderer;
 import ui.SpriteSheet;
 import ui.layout.GridLayout;
 import ui.texture.Image;
+import wollokGame.Collisions;
 
 public class Board extends Scene {
 
@@ -41,7 +42,7 @@ public class Board extends Scene {
 			}
 		}
 	}
-
+	
 	public List<Actor> getComponents() {
 		return this.components;
 	}
@@ -142,10 +143,18 @@ public class Board extends Scene {
 
 	@Override
 	public void update(Double time) {
-		for (int index = 0; index < components.size(); index++) {
-			final Actor component = this.components.get(index);
-			component.update(time);
+		final Collisions collisions = Collisions.getInstance();
+		final Actor[] components = new Actor[this.components.size()];
+		
+		for (int index = 0; index < this.components.size(); index++) {
+			components[index] = this.components.get(index);
+			components[index].update(time);
 		}
+		
+		for (int index = 0; index < components.length; index++) {
+			collisions.collides(components[index], components);
+		}
+		
 	}
 
 }

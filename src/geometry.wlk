@@ -11,8 +11,8 @@ class Point {
 		return self.translate(destiny.x(), destiny.y())
 	}
 
-	method isInPosition(_x, _y) {
-		return self.x().equals(_x) and self.y().equals(_y)
+	method samePosition(point) {
+		return self.x().equals(point.x()) and self.y().equals(point.y())
 	}
 
 }

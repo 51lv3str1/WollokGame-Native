@@ -38,7 +38,7 @@ public class GraphicsRenderer {
 	public static final GraphicSettings LOW_QUALITY_RENDER = new LowGraphicsSetting();
 	public static final GraphicSettings MEDIUM_QUALITY_RENDER = new MediumGraphicsSetting();
 	public static final GraphicSettings HIGH_QUALITY_RENDER = new HighGraphicsSetting();
-	private static GraphicSettings graphicSettings = LOW_QUALITY_RENDER;
+	private static GraphicSettings graphicSettings = MEDIUM_QUALITY_RENDER;
 			
 	/**
 	 * The Java 2D graphic context.
@@ -147,9 +147,9 @@ public class GraphicsRenderer {
 	 * @param message the message to be rendered.
 	 */
 	public void render(Message message) {
-//		this.graphics.setColor(message.getColor().asAWT());
-//		this.graphics.setFont(message.getFont());
-//		this.graphics.drawString(message.getText(), message.getPosition().getX(), message.getPosition().getY());
+		this.graphics.setColor(message.getColor().asAWT());
+		this.graphics.setFont(message.getFont());
+		this.graphics.drawString(message.getText(), message.getPosition().getX(), message.getPosition().getY());
 	}
 
 	/**
@@ -158,16 +158,16 @@ public class GraphicsRenderer {
 	 * @param balloon the balloon to be rendered.
 	 */
 	public void render(Balloon balloon) {
-//		final FontMetrics metrics = this.graphics.getFontMetrics(balloon.getFont());
-//		final Point position = balloon.getSpeecher().getAvailableNeighborPosition();
-//		final Rectangle bounds = new Rectangle(position.getX(), position.getY(), metrics.stringWidth(balloon.getMessageText()) + 10, metrics.getHeight() * 2);
-//		final int boundsRoundBorder = 20;
-//		final int messageX = bounds.x + (bounds.width - metrics.stringWidth(balloon.getMessageText())) / 2;
-//		final int messageY = bounds.y + ((bounds.height - metrics.getHeight()) / 2) + metrics.getAscent();
-//		this.graphics.setColor(WHITE.asAWT());
-//		this.graphics.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, boundsRoundBorder, boundsRoundBorder);
-//		balloon.setPosition(new Point(messageX, messageY));
-//		this.render(balloon.getMessage());
+		final FontMetrics metrics = this.graphics.getFontMetrics(balloon.getFont());
+		final Point position = balloon.getSpeecher().getCell().onEast().getPosition();
+		final Rectangle bounds = new Rectangle(position.getX(), position.getY(), metrics.stringWidth(balloon.getMessageText()) + 10, metrics.getHeight() * 2);
+		final int boundsRoundBorder = 20;
+		final int messageX = bounds.x + (bounds.width - metrics.stringWidth(balloon.getMessageText())) / 2;
+		final int messageY = bounds.y + ((bounds.height - metrics.getHeight()) / 2) + metrics.getAscent();
+		this.graphics.setColor(WHITE.asAWT());
+		this.graphics.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, boundsRoundBorder, boundsRoundBorder);
+		balloon.setPosition(new Point(messageX, messageY));
+		this.render(balloon.getMessage());
 	}
 
 	public void render(GameComponent component) {

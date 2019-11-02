@@ -6,17 +6,20 @@ import java.util.List;
 import org.uqbar.project.wollok.interpreter.WollokInterpreter;
 import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
+import org.uqbar.project.wollok.interpreter.core.WollokObjectListener;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 
 import component.GameComponent;
 import component.Positionable;
+import component.scene.Board;
+import component.scene.Cell;
 import geometry.Point;
 import ui.GraphicsRenderer;
 import ui.SpriteSheet;
 import ui.texture.Image;
 import ui.texture.Texture;
 
-public class Actor extends GameComponent implements Positionable {
+public class Actor extends GameComponent implements Positionable, WollokObjectListener {
 
 	private static final Texture DEFAULT_TEXTURE = new Image("assets/wko.png");
 
@@ -24,14 +27,17 @@ public class Actor extends GameComponent implements Positionable {
 	private final WollokInterpreter interpreter;
 	private final WollokInterpreterEvaluator evaluator;
 	private Texture texture;
+	private final Board board;
 	private List<GameComponent> components;
 
-	public Actor(WollokObject wollokObject) {
+	public Actor(WollokObject wollokObject, Board board) {
 		this.wollokObject = wollokObject;
 		this.interpreter = WollokInterpreter.getInstance();
 		this.evaluator = (WollokInterpreterEvaluator) interpreter.getEvaluator();
 		this.components = new ArrayList<GameComponent>();
 		this.createTexture();
+		this.wollokObject.addFieldChangedListener(this);
+		this.board = board;
 	}
 
 	public WollokObject wrapper() {
@@ -45,15 +51,24 @@ public class Actor extends GameComponent implements Positionable {
 	protected WollokInterpreterEvaluator getEvaluator() {
 		return this.evaluator;
 	}
-	
+
 	public List<GameComponent> getComponents() {
 		return this.components;
 	}
-	
-	public void add(GameComponent component){
+
+	public void add(GameComponent component) {
 		this.getComponents().add(component);
 	}
 	
+	public Cell getCell() {
+		return this.board.getCellWith(this);
+	}
+	
+	public Boolean collisionable() {
+		return !this.wrapper().hasProperty("collisionable") || this.wrapper().hasProperty("collisionable")
+				&& Boolean.valueOf(this.wrapper().call("collisionable").toString());
+	}
+
 	@Override
 	public Point getBoardPosition() {
 		final Integer x = Integer.valueOf(this.wrapper().call("position").call("x").toString());
@@ -108,12 +123,17 @@ public class Actor extends GameComponent implements Positionable {
 	 */
 	private void createTexture() {
 		if (this.wrapper().hasProperty("image")) {
-			this.createImage(this.wrapper().hasProperty("opacity") ? Float.valueOf(this.wrapper().call("opacity").toString()) : 1.0F);
+			this.createImage(this.wrapper().hasProperty("opacity")
+					? Float.valueOf(this.wrapper().call("opacity").toString()) : 1.0F);
 		}
 
 		else if (this.wrapper().hasProperty("animation")) {
 			this.createAnimation();
 		}
+	}
+	
+	private void updateTexture(Double time) {
+		this.getTexture().update(time);
 	}
 
 	/**
@@ -122,16 +142,25 @@ public class Actor extends GameComponent implements Positionable {
 	public Texture getTexture() {
 		return this.texture.equals(null) ? DEFAULT_TEXTURE : this.texture;
 	}
-	
+
 	@Override
 	public void render(GraphicsRenderer graphicsRenderer) {
-		this.getComponents().forEach(component ->  graphicsRenderer.render(component));
+		this.getComponents().forEach(component -> graphicsRenderer.render(component));
 	}
 
 	@Override
 	public void update(Double time) {
-		this.getTexture().update(time);
-		this.getComponents().forEach(component ->  component.update(time));
+		this.updateTexture(time);
+		this.getComponents().forEach(component -> component.update(time));
+	}
+
+	@Override
+	public void fieldChanged(String fieldName, Object oldValue, Object newValue) {
+		
+		if(fieldName.equals("animation")){
+			this.createTexture();
+		}
+		
 	}
 
 }

@@ -1,5 +1,7 @@
 package component.scene;
 
+import java.awt.Rectangle;
+
 import component.Positionable;
 import component.actor.Actor;
 import geometry.Point;
@@ -28,7 +30,7 @@ public class Cell implements Positionable {
 	public Image getImage() {
 		return this.getBoard().getGround();
 	}
-
+	
 	public Boolean hasComponent(Actor component) {
 		return component.getBoardPosition().equals(this.getBoardPosition());
 	}
@@ -63,6 +65,11 @@ public class Cell implements Positionable {
 
 	public Cell onNorthwest() {
 		return this.getBoard().getCellAt(this.getBoardPosition().translate(-1, -1));
+	}
+	
+	public Point getPosition() {
+		final Rectangle bounds = this.board.getLayout().getBounds(this.index);
+		return new Point(bounds.x, bounds.y);
 	}
 
 	@Override

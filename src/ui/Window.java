@@ -38,8 +38,10 @@ public class Window implements Dimensionable, WindowListener, ComponentListener,
 		this.menuBar = new JMenuBar();
 		this.frame = new JFrame("My Wollok Game");
 		this.canvas = new Canvas();
+		this.canvas.setIgnoreRepaint(true);
 		this.frame.setJMenuBar(this.menuBar);
-		this.frame.add(this.canvas);
+		this.frame.add(this.canvas,0);
+		this.frame.validate();
 		this.createMenus();
 		this.frame.addWindowListener(this);
 		this.frame.addComponentListener(this);
@@ -123,10 +125,8 @@ public class Window implements Dimensionable, WindowListener, ComponentListener,
 
 	public void open() {
 		this.frame.setLocationRelativeTo(null);
-		this.frame.revalidate();
 		this.frame.setVisible(true);
 		this.canvas.createBufferStrategy(2);
-		this.canvas.revalidate();
 	}
 
 	public void close() {

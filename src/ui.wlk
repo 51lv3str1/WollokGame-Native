@@ -5,7 +5,7 @@ class Spritesheet {
 	const property rows
 
 	method animation(loop, ratio, indexes...) {
-		return new Animation(spritesheet = self, loop = loop, ratio = ratio, indexes = indexes)
+		return new Animation(spritesheet = self, path = path, loop = loop, ratio = ratio, indexes = indexes)
 	}
 
 }
@@ -16,6 +16,7 @@ class Spritesheet {
 class Sprite {
 
 	const property spritesheet
+	const property path
 
 }
 
@@ -25,6 +26,7 @@ class Sprite {
 class Animation {
 
 	const property spritesheet
+	const property path
 	const property loop
 	const property ratio
 	const property indexes
