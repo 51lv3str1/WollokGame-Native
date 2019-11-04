@@ -15,12 +15,6 @@ import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 
-import component.Balloon;
-import component.actor.Actor;
-import component.scene.Board;
-import geometry.Point;
-import ui.Window;
-
 @SuppressWarnings({ "unused" })
 public class GameObject {
 
@@ -42,6 +36,16 @@ public class GameObject {
 	/** The current board. */
 	private Board board;
 
+	/** the Scheduler instance for this game. */
+	private final Scheduler scheduler = Scheduler.getInstance();
+
+	/** the Collisions instance for this game. */
+	private final Collisions collisions = Collisions.getInstance();
+
+	/** the Keyboard instance for this game. */
+	private final Keyboard keyboard = Keyboard.getInstance();
+
+	
 	public GameObject(WollokObject wrapped) {
 		this.wrapped = wrapped;
 		this.interpreter = WollokInterpreter.getInstance();
@@ -52,150 +56,122 @@ public class GameObject {
 		this.window.setDimension(800, 600);
 	}
 
-	/**
-	 * Adds an component to the current board for drawing on it. Object should
-	 * understand a position property (implemented by a reference or getter
-	 * method).
-	 * 
-	 * @param component the visual component.
-	 */
-	public void addVisual(WollokObject wcomponent) {
-		this.board.addComponent(new Actor(wcomponent, this.board));
+	public void addVisual(WollokObject component) {
+		this.board.addComponent(new Actor(component, this.board));
 	}
 	
-	/**
-	 * Removes an object from the board for stop drawing it.
-	 *
-	 * @param component a visual component.
-	 *
-	 * Example:
-	 *     game.removeVisual(pepita)
-	 */
+	public void addVisualIn(WollokObject component, WollokObject position) {
+		this.board.addComponent(new Actor(component, this.board, position));
+	}
+	
+	public void addVisualCharacter(WollokObject component) {
+		this.addVisual(component);
+	}
+	
+	public void addVisualCharacterIn(WollokObject component, WollokObject position) {
+		this.addVisualIn(component, position);
+	}
+
+	public void onTick(WollokObject milliseconds, WollokObject name, WollokObject closure) {
+		this.scheduler.onTick(milliseconds, name, closure);
+	}
+
+	public void removeTickEvent(WollokObject name) {
+		this.scheduler.removeTickEvent(name);
+	}
+
+	public void schedule(WollokObject milliseconds, WollokObject closure) {
+		this.scheduler.schedule(milliseconds, closure);
+	}
+
 	public void removeVisual(WollokObject component) {
 		this.board.remove(this.getActor(component));
 	}
 
-	/**
-	 * Returns all visual objects added to the board.
-	 */
 	public WollokObject allVisuals() {
-		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
-		this.board.getComponents().forEach(component -> wcomponents.call("add", component.wrapper()));
-		return wcomponents;
-	}
-	
-	/**
-	 * Gets the actor for this wollok object.
-	 * 
-	 * @param component
-	 */
-	private Actor getActor(WollokObject component){
-		return this.board.getComponents().stream().filter(actor -> actor.wrapper().equals(component)).findFirst().orElse(null);
-	}
-	
-	/**
-	 * Returns board height (in cells).
-	 */
-	public WollokObject height() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getColumns());
+		return this.toWollokListObject(this.board.getComponents());
 	}
 
-	/**
-	 * Returns board width (in cells).
-	 */
-	public WollokObject getWidth() {
+	private WollokObject toWollokListObject(List<Actor> actors) {
+		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
+		actors.forEach(component -> wcomponents.call("add", component.wrapper()));
+		return wcomponents;
+	}
+
+	private Actor getActor(WollokObject component) {
+		return this.board.getComponents().stream().filter(actor -> actor.wrapper().equals(component)).findFirst().orElse(null);
+	}
+
+	public WollokObject height() {
 		return WollokJavaConversions.convertJavaToWollok(this.board.getRows());
 	}
 
-	/**
-	 * Returns the game title.
-	 */
+	public void height(WollokObject height) {
+		this.board.setRows(Integer.valueOf(height.toString()));
+	}
+
+	public WollokObject width() {
+		return WollokJavaConversions.convertJavaToWollok(this.board.getColumns());
+	}
+
+	public void width(WollokObject width) {
+		this.board.setColumns(Integer.valueOf(width.toString()));
+	}
+
 	public WollokObject title() {
 		return WollokJavaConversions.convertJavaToWollok(this.window.getTitle());
 	}
 
-	/**
-	 * Sets a game title.
-	 */
 	public void title(WollokObject title) {
 		window.setTitle(title.toString());
 	}
 
-	/**
-	 * Sets full background image.
-	 * 
-	 * @param background
-	 */
 	public void ground(WollokObject path) {
 		this.board.setBackground(path.toString());
 	}
 
-	/**
-	 * Sets the cell background image.
-	 */
 	public void boardGround(WollokObject path) {
 		this.board.setGround(path.toString());
 	}
 
-	/**
-	 * Draws a dialog balloon with a message in given visual object position.
-	 * 
-	 * @param component
-	 * @param message
-	 */
+	public WollokObject getObjectsIn(WollokObject position) {
+		return this.toWollokListObject(this.board.getComponentsInPoint(new Point(position)));
+	}
+
 	public void say(WollokObject component, WollokObject message) {
 		final Actor actor = this.getActor(component);
 		actor.add(new Balloon(actor, message.toString()));
 	}
 	
-	/**
-	 * Adds a block that will be executed exactly when the given object collides with other. 
-	 * Two objects collide when are in the same position.
-	 * 
-	 * The block should expect the other object as parameter.
-	 * 
-	 * Example:
-	 *     game.onCollideDo(pepita, { comida => pepita.comer(comida) })
-	 */
+	public void clear() {
+		this.keyboard.clear();
+		this.collisions.clear();
+		this.scheduler.clear();
+	}
+
 	public void whenCollideDo(WollokObject visual, WollokObject action) {
-		Collisions.getInstance().listenCollisionWithAny(visual, action);
+		this.collisions.listenCollisionWithAny(visual, action);
 	}
-	
-	public void removeCollisionEvent(WollokObject visual){
-		Collisions.getInstance().stopListeningCollisionWithAny(visual);
+
+	public void removeCollisionEvent(WollokObject visual) {
+		this.collisions.stopListeningCollisionWithAny(visual);
 	}
-	
-	/**
-	 * Starts the game.
-	 */
+
 	public void start() {
 		this.window.open();
 		this.gameloop.run();
 	}
 
-	/**
-	 * Ends the game, and close the window.
-	 */
 	public void stop() {
 		this.gameloop.end();
 		this.window.close();
 	}
 
-	/**
-	 * Updates this component.
-	 * 
-	 * @param time the elapsed time.
-	 */
-	public void update(Double time) {
+	synchronized public void update(Double time) {
 		this.board.update(time);
 	}
 
-	/**
-	 * Render this component.
-	 * 
-	 * @param fps the current FPS count.
-	 */
-	public void render(Integer fps) {
+	synchronized public void render(Integer fps) {
 		this.window.render(fps, this.board);
 	}
 

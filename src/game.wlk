@@ -1,6 +1,3 @@
-import ui.*
-import scheduler.*
-
 object game {
 
 	/**
@@ -14,6 +11,47 @@ object game {
 	 *     game.addVisual(pepita) ==> pepita should have a position property
 	 */
 	method addVisual(component) native
+	
+		/**
+	 * Adds an object to the board for drawing it on a specific position.
+	 * 
+	 * @param component a visual component.
+	 * @param position a position.
+	 * 
+	 * Example:
+	 *     game.addVisualIn(pepita, game.origin()) ==> no need for pepita to have a position property
+	 *     game.addVisualIn(pepita, game.at(2, 2))
+	 */
+	method addVisualIn(component, position) native
+
+	/**
+	 * Adds an object to the board for drawing it. It can be moved with arrow keys.
+	 * That object should understand a position property 
+	 * (implemented by a reference or getter method).
+	 * 
+	 * @param component
+	 * 
+	 * Example:
+	 *     game.addVisualCharacter(pepita) ==> pepita should have a position property
+	 */
+	method addVisualCharacter(component) native
+//		self.addVisual(component)
+//		keyboard.left().onKeyPressedDo({ component.position(component.position().left(1))})
+//		keyboard.up().onKeyPressedDo({ component.position(component.position().up(1))})
+//		keyboard.right().onKeyPressedDo({ component.position(component.position().right(1))})
+//		keyboard.down().onKeyPressedDo({ component.position(component.position().down(1))})
+//	}
+
+	/**
+	 * Adds an object to the board for drawing it on a specific position. It can be moved with arrow keys.
+	 * 
+	 * @param component a visual component.
+	 * @param position a position.
+	 * 
+	 * Example:
+	 *     game.addVisualCharacterIn(pepita, game.origin()) ==> no need for pepita to have a position property
+	 */
+	method addVisualCharacterIn(component, position) native
 
 	/**
 	 * Removes an object from the board for stop drawing it.
@@ -32,53 +70,6 @@ object game {
 	 *     game.allVisuals()
 	 */
 	method allVisuals() native
-
-	/**
-	 * Adds an object to the board for drawing it on a specific position.
-	 * 
-	 * @param component a visual component.
-	 * @param position a position.
-	 * 
-	 * Example:
-	 *     game.addVisualIn(pepita, game.origin()) ==> no need for pepita to have a position property
-	 *     game.addVisualIn(pepita, game.at(2, 2))
-	 */
-	method addVisualIn(component, position) {
-		component.position(position)
-		self.addVisual(component)
-	}
-
-	/**
-	 * Adds an object to the board for drawing it. It can be moved with arrow keys.
-	 * That object should understand a position property 
-	 * (implemented by a reference or getter method).
-	 * 
-	 * @param component
-	 * 
-	 * Example:
-	 *     game.addVisualCharacter(pepita) ==> pepita should have a position property
-	 */
-	method addVisualCharacter(component) {
-		self.addVisual(component)
-		keyboard.left().onKeyPressedDo({component.position(component.position().left(1))})
-		keyboard.up().onKeyPressedDo({component.position(component.position().up(1))})
-		keyboard.right().onKeyPressedDo({component.position(component.position().right(1))})
-		keyboard.down().onKeyPressedDo({component.position(component.position().down(1))})
-	}
-
-	/**
-	 * Adds an object to the board for drawing it on a specific position. It can be moved with arrow keys.
-	 * 
-	 * @param component a visual component.
-	 * @param position a position.
-	 * 
-	 * Example:
-	 *     game.addVisualCharacterIn(pepita, game.origin()) ==> no need for pepita to have a position property
-	 */
-	method addVisualCharacterIn(component, position) {
-		component.position(position)
-		self.addVisualCharacter(component)
-	}
 
 	/**
 	 * Verifies if an object is currently in the board.
@@ -123,7 +114,7 @@ object game {
 	method onCollideDo(visual, action) {
 		self.whenCollideDo(visual, action)
 	}
-	
+
 	method removeCollisionEvent(visual) native
 
 	/**
@@ -135,9 +126,7 @@ object game {
 	 * @param name
 	 * @param gameAction
 	 */
-	method onTick(milliseconds, name, closure) {
-		scheduler.onTick(milliseconds, name, closure)
-	}
+	method onTick(milliseconds, name, closure) native
 
 	/**
 	 * Adds a block that will be executed in n milliseconds. Block expects no
@@ -146,9 +135,7 @@ object game {
 	 * @param milliseconds
 	 * @param gameAction
 	 */
-	method schedule(milliseconds, closure) {
-		scheduler.schedule(milliseconds, closure)
-	}
+	method schedule(milliseconds, closure) native
 
 	/**
 	 * Remove a tick event created with onTick message
@@ -156,9 +143,7 @@ object game {
 	 * Example:
 	 *      game.removeTickEvent("pepitaMoving")
 	 */
-	method removeTickEvent(name) {
-		scheduler.removeTickEvent(name)
-	}
+	method removeTickEvent(name) native
 
 	/**
 	 * Returns all objects in given position.
@@ -166,9 +151,7 @@ object game {
 	 * Example:
 	 *     game.getObjectsIn(game.origin())
 	 */
-	method getObjectsIn(position) {
-	// TODO
-	}
+	method getObjectsIn(position) native
 
 	/**
 	 * Draws a dialog balloon with a message in given visual object position.
@@ -181,18 +164,13 @@ object game {
 	/**
 	 * Removes all visual objects on board and configurations (colliders, keys, etc).
 	 */
-	method clear() {
-		// TODO Collisions
-		scheduler.clearEvents()
-		keyboard.clearEvents()
-	}
+	method clear() native
 
 	/**
 	 * Returns all objects that are in same position of given object.
 	 */
 	method colliders(visual) {
-		// TODO
-		return []
+		return self.getObjectsIn(visual.position())
 	}
 
 	/**
@@ -681,11 +659,97 @@ object keyboard {
 		japaneseKatakana, japaneseHiragana, japaneseRoman, kanaLock, imputconstOnOrOff, at, colon,
 		circunflex, dollar, euro, exclamationMark, jinvertedExclamationMark, leftParenthesis, numberSign,
 		plus, rightParenthesis, underscore, windows, contextMenu]
-
-	method clearEvents() {
-		keys.forEach({key => key.clear()})
-	}
+		
 }
+
+class Spritesheet {
+
+	const property path
+	const property columns
+	const property rows
+
+	method animation(loop, ratio, indexes...) {
+		return new Animation(spritesheet = self, path = path, loop = loop, ratio = ratio, indexes = indexes)
+	}
+
+}
+
+/**
+ * 
+ */
+class Sprite {
+
+	const property spritesheet
+	const property path
+
+}
+
+/**
+ * 
+ */
+class Animation {
+
+	const property spritesheet
+	const property path
+	const property loop
+	const property ratio
+	const property indexes
+
+}
+
+package color {
+
+	/**
+	 * Class color implementation.
+	 * hexcode represents the hexadecimal code for decoding that color.
+	 */
+	class Color {
+
+		const property hexcode
+
+	}
+	
+	/** Black color */
+	object black inherits Color { override method hexcode() = "#000000" }
+	
+	/** Blue color */
+	object blue inherits Color { override method hexcode() = "#0000FF" }
+	
+	/** Cyan color */
+	object cyan inherits Color { override method hexcode() = "#00FFFF" }
+	
+	/** Dark Gray color */
+	object darkGray inherits Color { override method hexcode() = "#A9A9A9" }
+	
+	/** Gray color */
+	object gray inherits Color { override method hexcode() = "#808080" }
+	
+	/** Green color */
+	object green inherits Color { override method hexcode() = "#008000" }
+	
+	/** Light Gray color */
+	object lightGray inherits Color { override method hexcode() = "#D3D3D3" }
+	
+	/** Magenta color */
+	object magenta inherits Color { override method hexcode() = "#FF00FF" }
+	
+	/** Orange color */
+	object orange inherits Color { override method hexcode() = "#FFA500" }
+	
+	/** Pink color */
+	object pink inherits Color { override method hexcode() = "#FFC0CB" }
+	
+	/** Red color */
+	object red inherits Color { override method hexcode() = "#FF0000" }
+	
+	/** White color */
+	object white inherits Color { override method hexcode() = "#FFFFFF" }
+	
+	/** Yellow color */
+	object yellow inherits Color { override method hexcode() = "#FFFF00" }
+	
+}
+
 
 
 

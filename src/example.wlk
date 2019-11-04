@@ -13,14 +13,14 @@ class Obstacle {
 }
 
 class Objective {
-	
+
 	var property collisionable = true
-	
+
 	method collidedBy(another) {
 		collisionable = false
 		duba.playing(false)
 		duba.eat()
-		game.schedule(1000, {game.removeVisual(duba.playing(true))})
+		game.schedule(1000, { game.removeVisual(duba.playing(true))})
 		game.removeVisual(self)
 	}
 
@@ -34,80 +34,70 @@ class Decoration {
 
 object obstaculo1 inherits Obstacle {
 
-	var property image = "assets/obstacle-1.png"
-	var property position = game.at(0, 0)
+	var property image = "obstacle-1.png"
 
 }
 
 object obstaculo2 inherits Obstacle {
 
-	var property image = "assets/obstacle-2.png"
-	var property position = game.at(0, 0)
+	var property image = "obstacle-2.png"
 
 }
 
 object obstaculo3 inherits Obstacle {
 
-	var property image = "assets/obstacle-1.png"
-	var property position = game.at(0, 0)
+	var property image = "obstacle-1.png"
 
 }
 
 class Piso inherits Decoration {
 
-	var property image = "assets/duba-ground.png"
-	var property position = game.at(0, 0)
+	var property image = "duba-ground.png"
 	var property opacity = 0.8
 
 }
 
 object decoracion1 inherits Decoration {
 
-	var property image = "assets/decoration-1.png"
-	var property position = game.at(0, 0)
+	var property image = "decoration-1.png"
 
 }
 
 object decoracion2 inherits Decoration {
 
-	var property image = "assets/decoration-2.png"
-	var property position = game.at(0, 0)
+	var property image = "decoration-2.png"
 
 }
 
 object decoracion3 inherits Decoration {
 
-	var property image = "assets/decoration-1.png"
-	var property position = game.at(0, 0)
+	var property image = "decoration-1.png"
 
 }
 
 object churrasco1 inherits Objective {
 
-	var property image = "assets/churrasco.png"
-	var property position = game.at(0, 0)
+	var property image = "churrasco.png"
 
 }
 
 object churrasco2 inherits Objective {
 
-	var property image = "assets/churrasco.png"
-	var property position = game.at(0, 0)
+	var property image = "churrasco.png"
 
 }
 
 object churrasco3 inherits Objective {
 
-	var property image = "assets/churrasco.png"
-	var property position = game.at(0, 0)
+	var property image = "churrasco.png"
 
 }
 
 object duba {
 
 	var property playing = true
-	const bounds =new Range(start=1, end=6)
-	const spritesheet = game.createSpritesheet("assets/duba.png", 10, 15)
+	const bounds = new Range(start = 1, end = 6)
+	const spritesheet = game.createSpritesheet("duba.png", 15, 10)
 	const idleAnimation = spritesheet.animation(true, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 12, 12, 13, 14, 15, 16, 17, 18, 19, 19, 20, 21, 22, 23, 23, 23, 24, 25, 26, 27, 27, 28, 29, 30, 31, 31, 31, 31, 31, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
 //	const walkingAnimation = spritesheet.animation(true, 3, 0, 53, 54, 55, 56, 57, 58, 59, 60, 0)
 	const eatAnimation = spritesheet.animation(false, 3, 0, 0, 61, 62, 63, 64, 65, 65, 65, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75)
@@ -138,7 +128,7 @@ object duba {
 			position = self.position().down(1)
 		}
 	}
-	
+
 	method idle() {
 		animation = idleAnimation
 	}
@@ -146,13 +136,14 @@ object duba {
 	method knockAndFall() {
 		animation = fallingAnimation
 		playing = false
-		game.say(self,"Auch!, esquiva los objetivos")
+		game.say(self, "Auch!, esquiva los objetivos")
 	}
-	
+
 	method eat() {
 		animation = eatAnimation
-		game.schedule(885, {self.animation(idleAnimation)})
+		game.schedule(885, { self.animation(idleAnimation)})
 	}
+	
 
 	method initialize() {
 		keyboard.left().onKeyPressedDo({ self.moveToLeft()})
@@ -167,8 +158,12 @@ object duba {
 object example {
 
 	method initialize() {
-		game.ground("assets/background.png")
-		new Range(start=1,end=6).forEach({ x => new Range(start = 1, end = 6).forEach({ y => game.addVisualIn(new Piso(), game.at(x, y))})})
+		new Range(start=1,end=6).forEach({
+			x => new Range(start = 1, end = 6).forEach({
+			y => game.addVisualIn(new Piso(), game.at(x, y))
+		})})
+		game.width(8)
+		game.height(8)
 		game.addVisualIn(obstaculo1, game.at(2, 3))
 		game.addVisualIn(obstaculo2, game.at(4, 4))
 		game.addVisualIn(obstaculo3, game.at(5, 3))
@@ -179,8 +174,10 @@ object example {
 		game.addVisualIn(churrasco2, game.at(2, 6))
 		game.addVisualIn(churrasco3, game.at(6, 6))
 		game.addVisual(duba)
-		game.sound("assets/BGM.wav").loop()
+		game.ground("background.png")
+//		game.sound("assets/BGM.wav").loop()
 		game.start()
 	}
 
 }
+
