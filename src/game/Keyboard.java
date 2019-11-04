@@ -7,10 +7,12 @@ public class Keyboard implements Input {
 
 	private static Keyboard instance;
 
-	private List<InputListener> listeners = new ArrayList<InputListener>();
+	private final List<InputListener> listeners;
+	private final List<KeyInput> keys;
 
 	private Keyboard() {
-
+		this.listeners = new ArrayList<InputListener>();
+		this.keys = new ArrayList<KeyInput>();
 	}
 
 	public static Keyboard getInstance() {
@@ -22,11 +24,36 @@ public class Keyboard implements Input {
 	}
 
 	public void addListener(InputListener listener) {
-		this.listeners.add(listener);
+		if (!this.listeners.contains(listener)) {
+			this.listeners.add(listener);
+		}
 	}
 
 	public void addKey(KeyInput key) {
-		this.listeners.stream().forEach(listener -> listener.listenKeyInput(key));
+		if (!this.keys.contains(key)) {
+			for (int index = 0; index < this.listeners.size(); index++) {
+				this.listeners.get(index).listenKeyInput(key);
+			}
+			this.keys.add(key);
+		}
+	}
+
+	public void removeKey(KeyInput key) {
+		if (this.keys.contains(key)) {
+			for (int index = 0; index < this.listeners.size(); index++) {
+				this.listeners.get(index).stoplisteningKeyInput(key);
+			}
+			this.keys.remove(key);
+		}
+	}
+
+	public void clear() {
+		for (int lIndex = 0; lIndex < this.listeners.size(); lIndex++) {
+			for (int kIndex = 0; kIndex < this.keys.size(); kIndex++) {
+				this.listeners.get(lIndex).stoplisteningKeyInput(this.keys.get(kIndex));
+			}
+		}
+		this.listeners.clear();
 	}
 
 }

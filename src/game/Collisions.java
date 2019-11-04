@@ -1,14 +1,13 @@
 package game;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.uqbar.project.wollok.interpreter.WollokInterpreter;
 import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
-
-import component.actor.Actor;
 
 @SuppressWarnings({ "unused" })
 public class Collisions {
@@ -51,12 +50,16 @@ public class Collisions {
 		}
 	}
 
-	public void collides(Actor collided, Actor[] colliders) {
+	public void collides(Actor collided, List<Actor> colliders) {
 		if (this.listenCollisions(collided.wrapper())) {
-			for (int index = 0; index < colliders.length; index++) {
-				this.collides(collided, colliders[index]);
+			for (int index = 0; index < colliders.size(); index++) {
+				this.collides(collided, colliders.get(index));
 			}
 		}
+	}
+	
+	public void clear() {
+		this.collisions.clear();
 	}
 
 }
