@@ -174,5 +174,7 @@ public class GameObject {
 	synchronized public void render(Integer fps) {
 		this.window.render(fps, this.board);
 	}
+	
+	
 
 }
