@@ -1,25 +1,25 @@
 package game;
 
-import static java.awt.Font.*;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.awt.image.BufferStrategy;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
+import javax.swing.JFrame;
 
 import org.uqbar.project.wollok.interpreter.WollokInterpreter;
 import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 
-@SuppressWarnings({ "unused" })
-public class GameObject {
+import ui.GraphicsRenderer;
 
-	/** Wollok instance for this game. */
-	private final WollokObject wrapped;
+public class GameObject implements ComponentListener, Runnable, WindowListener {
 
 	/** Wollok interpreter. */
 	private final WollokInterpreter interpreter;
@@ -27,152 +27,260 @@ public class GameObject {
 	/** Wollok evaluator. */
 	private final WollokInterpreterEvaluator evaluator;
 
-	/** The windows instance for this game. */
-	private final Window window;
+	/** Game Thread */
+	private volatile Thread loopThread = new Thread(this);
 
-	/** The GameLoop instance for this game. */
-	private final GameLoop gameloop;
+	/** Game Frame */
+	private final JFrame frame = new JFrame(this.title);
 
-	/** The current board. */
+	/** Game Canvas */
+	private final Canvas canvas = new Canvas();
+
+	/** Game running state */
+	private Boolean isRunning = false;
+
+	/** Current fps count */
+	private Integer fpsCount = 0;
+
+	/** FPS target */
+	private Integer fps = 60;
+
+	/** UPS target */
+	private Integer ups = 60;
+
+	/** Game Title **/
+	private String title = "My Game";
+
+	private Dimension dimension;
+
 	private Board board;
 
-	/** the Scheduler instance for this game. */
-	private final Scheduler scheduler = Scheduler.getInstance();
-
-	/** the Collisions instance for this game. */
-	private final Collisions collisions = Collisions.getInstance();
-
-	/** the Keyboard instance for this game. */
-	private final Keyboard keyboard = Keyboard.getInstance();
-
-	
-	public GameObject(WollokObject wrapped) {
-		this.wrapped = wrapped;
+	public GameObject() {
 		this.interpreter = WollokInterpreter.getInstance();
 		this.evaluator = (WollokInterpreterEvaluator) interpreter.getEvaluator();
-		this.gameloop = new GameLoop(this);
+		this.loopThread.setDaemon(true);
+		this.frame.add(this.canvas, 0);
+		this.frame.validate();
+		this.frame.addWindowListener(this);
+		this.frame.addComponentListener(this);
+		this.dimension(800, 600);
 		this.board = new Board(8, 8);
-		this.window = Window.getInstance();
-		this.window.setDimension(800, 600);
+	}
+
+	private WollokObject toWollokListObject(List<WollokObject> components) {
+		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
+		components.forEach(component -> wcomponents.call("add", component));
+		return wcomponents;
 	}
 
 	public void addVisual(WollokObject component) {
-		this.board.addComponent(new Actor(component, this.board));
+		this.board.addComponent(component);
 	}
-	
+
 	public void addVisualIn(WollokObject component, WollokObject position) {
-		this.board.addComponent(new Actor(component, this.board, position));
-	}
-	
-	public void addVisualCharacter(WollokObject component) {
-		this.addVisual(component);
-	}
-	
-	public void addVisualCharacterIn(WollokObject component, WollokObject position) {
-		this.addVisualIn(component, position);
-	}
-
-	public void onTick(WollokObject milliseconds, WollokObject name, WollokObject closure) {
-		this.scheduler.onTick(milliseconds, name, closure);
-	}
-
-	public void removeTickEvent(WollokObject name) {
-		this.scheduler.removeTickEvent(name);
-	}
-
-	public void schedule(WollokObject milliseconds, WollokObject closure) {
-		this.scheduler.schedule(milliseconds, closure);
-	}
-
-	public void removeVisual(WollokObject component) {
-		this.board.remove(this.getActor(component));
+		this.board.addComponent(component);
 	}
 
 	public WollokObject allVisuals() {
 		return this.toWollokListObject(this.board.getComponents());
 	}
 
-	private WollokObject toWollokListObject(List<Actor> actors) {
-		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
-		actors.forEach(component -> wcomponents.call("add", component.wrapper()));
-		return wcomponents;
+	public Boolean hasVisual(WollokObject component) {
+		return this.board.hasComponent(component);
 	}
 
-	private Actor getActor(WollokObject component) {
-		return this.board.getComponents().stream().filter(actor -> actor.wrapper().equals(component)).findFirst().orElse(null);
-	}
-
-	public WollokObject height() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getRows());
-	}
-
-	public void height(WollokObject height) {
-		this.board.setRows(Integer.valueOf(height.toString()));
-	}
-
-	public WollokObject width() {
-		return WollokJavaConversions.convertJavaToWollok(this.board.getColumns());
-	}
-
-	public void width(WollokObject width) {
-		this.board.setColumns(Integer.valueOf(width.toString()));
-	}
-
-	public WollokObject title() {
-		return WollokJavaConversions.convertJavaToWollok(this.window.getTitle());
-	}
-
-	public void title(WollokObject title) {
-		window.setTitle(title.toString());
-	}
-
-	public void ground(WollokObject path) {
-		this.board.setBackground(path.toString());
-	}
-
-	public void boardGround(WollokObject path) {
-		this.board.setGround(path.toString());
-	}
-
-	public WollokObject getObjectsIn(WollokObject position) {
-		return this.toWollokListObject(this.board.getComponentsInPoint(new Point(position)));
-	}
-
-	public void say(WollokObject component, WollokObject message) {
-		final Actor actor = this.getActor(component);
-		actor.add(new Balloon(actor, message.toString()));
-	}
-	
-	public void clear() {
-		this.keyboard.clear();
-		this.collisions.clear();
-		this.scheduler.clear();
-	}
-
-	public void whenCollideDo(WollokObject visual, WollokObject action) {
-		this.collisions.listenCollisionWithAny(visual, action);
-	}
-
-	public void removeCollisionEvent(WollokObject visual) {
-		this.collisions.stopListeningCollisionWithAny(visual);
-	}
-
-	public void start() {
-		this.window.open();
-		this.gameloop.run();
+	public void removeVisual(WollokObject component) {
+		this.board.removeComponent(component);
 	}
 
 	public void stop() {
-		this.gameloop.end();
-		this.window.close();
+		System.exit(0);
 	}
 
-	synchronized public void update(Double time) {
-		this.board.update(time);
+	public void start() {
+		this.run();
 	}
 
-	synchronized public void render(Integer fps) {
-		this.window.render(fps, this.board);
+	public String title() {
+		return this.title;
+	}
+
+	public void title(String title) {
+		this.title = title;
+	}
+
+	public WollokObject width() {
+		return WollokJavaConversions.convertJavaToWollok(this.board.columns());
+	}
+
+	public void width(WollokObject columns) {
+		this.board.columns(columns);
+	}
+
+	public WollokObject height() {
+		return WollokJavaConversions.convertJavaToWollok(this.board.rows());
+	}
+
+	public void height(WollokObject rows) {
+		this.board.rows(rows);
+	}
+
+	public Dimension dimension() {
+		return this.dimension;
+	}
+
+	private void dimension(Integer width, Integer height) {
+		this.dimension = new Dimension(width, height);
+		this.frame.setSize(dimension);
+		this.frame.setPreferredSize(dimension);
+		this.canvas.setSize(dimension);
+		this.canvas.setPreferredSize(dimension);
+	}
+
+	public void run() {
+		long initialTime = System.nanoTime();
+		double timeU = 1000000000.0 / ups;
+		double timeF = 1000000000.0 / fps;
+		double deltaU = 0.0;
+		double deltaF = 0.0;
+		int frames = 0;
+		long timer = System.currentTimeMillis();
+		this.isRunning = true;
+		this.open();
+
+		while (this.isRunning) {
+
+			long currentTime = System.nanoTime();
+			deltaU += (currentTime - initialTime) / timeU;
+			deltaF += (currentTime - initialTime) / timeF;
+			initialTime = currentTime;
+
+			if (deltaU >= 1) {
+				// update logic here.
+				this.board.update(deltaU);
+				deltaU--;
+			}
+
+			if (deltaF >= 1) {
+				// render logic here.
+				this.frame.setTitle(this.title + ": " + fps);
+				final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.graphics(), this.canvas.getSize());
+				this.board.render(graphicsRenderer);
+				this.frame.setTitle(this.title() + " : " + this.fpsCount);
+				frames++;
+				deltaF--;
+				this.showGraphics();
+				this.clearGraphics();
+				this.diposeGraphics();
+			}
+
+			if (System.currentTimeMillis() - timer > 1000) {
+				this.fpsCount = frames;
+				frames = 0;
+				timer += 1000;
+			}
+
+			this.sleep(initialTime, deltaU);
+		}
+	}
+
+	public void end() {
+		this.isRunning = false;
+	}
+
+	private void sleep(Long lastLoopTime, Double OPTIMAL_TIME) {
+		try {
+			Thread.sleep((long) Math.max(0, ((lastLoopTime - System.nanoTime() + OPTIMAL_TIME) / 1000000)));
+		}
+
+		catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Window methods.
+
+	public void open() {
+		this.frame.setLocationRelativeTo(null);
+		this.frame.setVisible(true);
+		this.canvas.setIgnoreRepaint(true);
+		this.canvas.createBufferStrategy(2);
+	}
+	
+	private BufferStrategy bufferStrategy() {
+		return this.canvas.getBufferStrategy();
+	}
+
+	private Graphics2D graphics() {
+		return (Graphics2D) this.bufferStrategy().getDrawGraphics();
+	}
+	
+	private void showGraphics() {
+		this.bufferStrategy().show();
+	}
+	
+	private void clearGraphics() {
+		this.graphics().clearRect(0, 0, Double.valueOf(this.dimension().getWidth()).intValue(), Double.valueOf(this.dimension().getHeight()).intValue());
+	}
+	
+	private void diposeGraphics() {
+		this.graphics().dispose();
+	}
+
+	// Window listeners methods.
+
+	public void windowActivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowClosed(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowClosing(WindowEvent arg0) {
+		this.stop();
+	}
+
+	public void windowDeactivated(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowDeiconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowIconified(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void windowOpened(WindowEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void componentHidden(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void componentMoved(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void componentResized(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void componentShown(ComponentEvent arg0) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

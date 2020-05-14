@@ -1,73 +1,46 @@
 package game;
 
-public class Cell implements Positionable {
+import java.util.ArrayList;
+import java.util.List;
 
-	private final Board board;
-	private final Integer index;
-	private final Point boardPosition;
+import org.uqbar.project.wollok.interpreter.core.WollokObject;
 
-	public Cell(Board board, Integer index, Point position) {
-		this.board = board;
-		this.index = index;
-		this.boardPosition = position;
+import geometry.Position;
+import ui.Image;
+
+public class Cell {
+
+	private static final Image DEFAULT_TEXTURE = new Image("ground.png");
+	private final List<WollokObject> components;
+	private final Position position;
+
+	public Cell(Position position) {
+		this.components = new ArrayList<WollokObject>();
+		this.position = position;
 	}
 
-	public Board getBoard() {
-		return this.board;
+	public List<WollokObject> components() {
+		return this.components;
 	}
 
-	public Integer getIndex() {
-		return this.index;
+	public Position position() {
+		return this.position;
 	}
 
-	public Image getImage() {
-		return this.getBoard().getGround();
+	public void addComponent(WollokObject component) {
+		this.components().add(component);
 	}
 
-	public Boolean hasComponent(Actor component) {
-		return component.getBoardPosition().equals(this.getBoardPosition());
+	public void removeComponent(WollokObject component) {
+		this.components().remove(component);
 	}
 
-	public Cell onNorth() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(0, -1));
+	public Boolean hasComponent(WollokObject component) {
+		return this.components().contains(component);
 	}
 
-	public Cell onNortheast() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(1, -1));
+	public Image image() {
+		return DEFAULT_TEXTURE;
 	}
-
-	public Cell onEast() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(1, 0));
-	}
-
-	public Cell onSoutheast() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(1, 1));
-	}
-
-	public Cell onSouth() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(0, 1));
-	}
-
-	public Cell onSouthwest() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(-1, 1));
-	}
-
-	public Cell onWest() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(-1, 0));
-	}
-
-	public Cell onNorthwest() {
-		return this.getBoard().getCellAt(this.getBoardPosition().translate(-1, -1));
-	}
-
-	public Point getPosition() {
-		final Bounds bounds = this.board.getLayout().getBounds(this.index);
-		return new Point(bounds.getX(), bounds.getY());
-	}
-
-	@Override
-	public Point getBoardPosition() {
-		return boardPosition;
-	}
-
+	
 }

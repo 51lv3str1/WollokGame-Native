@@ -2,187 +2,101 @@ package game;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
-public class Board extends Scene {
+import org.uqbar.project.wollok.interpreter.core.WollokObject;
 
-	private static final Image TEXTURE = new Image("ground.png");
+import geometry.Position;
+import ui.GraphicsRenderer;
 
-	private Cell[] cells;
-	private GridLayout layout;
-	private Image ground;
-	private SpriteSheet background;
-	private final List<Actor> components;
+public class Board {
+
+	private final List<Cell> cells;
+	private Integer columns;
+	private Integer rows;
+
+	public Board() {
+		this(8, 8);
+	}
 
 	public Board(Integer columns, Integer rows) {
-		this.components = new ArrayList<Actor>();
-		this.setLayout(new GridLayout(columns, rows));
-		this.validate();
+		this.cells = new ArrayList<Cell>();
+		this.columns(columns);
+		this.rows(rows);
+	}
+	
+	public Integer rows() {
+		return this.rows;
 	}
 
-	public void validate() {
-		this.cells = new Cell[this.getColumns() * this.getRows()];
-		this.setLayout(new GridLayout(this.getColumns(), this.getRows()));
+	public void rows(Integer rows) {
+		this.rows = rows;
+	}
 
-		Integer index = 0;
-		for (int row = 0; row < this.getRows(); row++) {
-			for (int column = 0; column < this.getColumns(); column++) {
-				this.cells[index] = new Cell(this, index++, new Point(column, row));
-			}
+	public void rows(Double rows) {
+		this.rows(rows.intValue());
+	}
+
+	public void rows(WollokObject rows) {
+		this.rows(Integer.valueOf(rows.toString()));
+	}
+
+	public Integer columns() {
+		return this.columns;
+	}
+
+	public void columns(Integer columns) {
+		this.columns = columns;
+	}
+
+	public void columns(Double columns) {
+		this.columns(columns.intValue());
+	}
+
+	public void columns(WollokObject columns) {
+		this.columns(Integer.valueOf(columns.toString()));
+	}
+
+	public Cell getCell(Position position) {
+		Cell res = this.cells.stream().filter(cell -> cell.position().equals(position)).findFirst().orElse(null);
+		if (res == null) {
+			res = new Cell(position);
+			this.cells.add(res);
 		}
-
+		return res;
 	}
 
-	public GridLayout getLayout() {
-		return layout;
+	public List<WollokObject> getComponents() {
+		return this.cells.stream().flatMap(cell -> cell.components().stream()).collect(Collectors.toList());
 	}
 
-	protected void setLayout(GridLayout layout) {
-		this.layout = layout;
+	public void addComponent(WollokObject component) {
+		this.addComponentIn(component, component.call("position"));
 	}
 
-	public List<Actor> getComponents() {
-		return this.components;
+	public void addComponentIn(WollokObject component, WollokObject position) {
+		this.getCell(new Position(position)).addComponent(component);
 	}
 
-	public Integer getColumns() {
-		return this.getLayout().getColumns();
+	public void removeComponent(WollokObject component) {
+		this.getCell(new Position(component.call("position"))).removeComponent(component);
 	}
 
-	public void setColumns(Integer columns) {
-		this.getLayout().setColumns(columns);
+	public Boolean hasComponent(WollokObject component) {
+		return this.cells.stream().anyMatch(cell -> cell.hasComponent(component));
 	}
-
-	public Integer getRows() {
-		return this.getLayout().getRows();
-	}
-
-	public void setRows(Integer rows) {
-		this.getLayout().setRows(rows);
-	}
-
-	public Boolean hasBackground() {
-		return this.background != null;
-	}
-
-	public Image getBackground() {
-		return this.background.getImage();
-	}
-
-	public Image getBackgroundSubimage(Integer index) {
-		return this.background.getSprite(index).getImage();
-	}
-
-	public void setBackground(String path) {
-		this.background = new SpriteSheet(path, this.getColumns(), this.getRows());
-	}
-
-	public Boolean hasGround() {
-		return this.ground != null;
-	}
-
-	public Image getGround() {
-		return (this.hasGround()) ? this.getGround() : TEXTURE;
-	}
-
-	public void setGround(String path) {
-		this.ground = new Image(path);
-	}
-
-	public Cell[] getCells() {
-		return this.cells;
-	}
-
-	public void setCells(Cell... cells) {
-		this.cells = cells;
-	}
-
-	public Integer size() {
-		return this.getCells().length;
-	}
-
-	public Integer componentsCount() {
-		return this.getComponents().size();
-	}
-
-	public Boolean hasComponent(Actor component) {
-		Boolean any = false;
-		Integer count = 0;
-		Cell cell = null;
-
-		while (!any || count == this.cells.length) {
-			cell = this.cells[count++];
-			any |= cell.hasComponent(component);
-		}
-
-		return any;
-	}
-
-	public Cell getCellAt(Point position) {
-		Boolean finded = false;
-		Integer count = 0;
-		Cell cell = null;
-
-		while (!finded || count == this.cells.length) {
-			cell = this.cells[count++];
-			finded = cell.getBoardPosition().equals(position);
-		}
-
-		return cell;
-	}
-
-	public Cell getCellWith(Actor component) {
-		return this.getCellAt(component.getBoardPosition());
-	}
-
-	public void addComponent(Actor component) {
-		this.getComponents().add(component);
-	}
-
-	public List<Actor> getComponentsInPoint(Point point) {
-		final List<Actor> components = new ArrayList<Actor>();
-
-		for (int index = 0; index < this.getComponents().size(); index++) {
-			final Actor component = this.getComponents().get(index);
-			if (component.getBoardPosition().equals(point)) {
-				components.add(component);
-			}
-		}
-
-		return components;
-	}
-
-	public void remove(Actor actor) {
-		this.getComponents().remove(actor);
-	}
-
-	@Override
-	public void render(GraphicsRenderer graphicsRenderer) {
-		this.validate();
-
-		for (int index = 0; index < this.size(); index++) {
-			final Bounds bounds = this.getLayout().getBounds(index);
-			final Point position = new Point(bounds.getX(), bounds.getY());
-			final Dimension dimension = new Dimension(bounds.getWidth(), bounds.getHeight());
-			graphicsRenderer.render(cells[index], position, dimension);
-		}
-
-		for (int index = 0; index < components.size(); index++) {
-			final Actor component = this.components.get(index);
-			final Bounds bounds = this.getLayout().getBounds(this.getCellWith(component).getIndex());
-			final Point position = new Point(bounds.getX(), bounds.getY());
-			final Dimension dimension = new Dimension(bounds.getWidth(), bounds.getHeight());
-			graphicsRenderer.render(component, position, dimension);
-		}
-
-	}
-
-	@Override
+	
 	public void update(Double time) {
-		for (int index = 0; index < this.componentsCount(); index++) {
-			final Actor component = this.getComponents().get(index);
-			component.update(time);
-			Collisions.getInstance().collides(component, this.getComponents());
-		}
+		
+	}
+
+	public void render(GraphicsRenderer graphicsRenderer) {
+		graphicsRenderer.render(this);
+//		for (int row = 0; row < this.rows(); row++) {
+//			for (int column = 0; column < this.columns(); column++) {
+//				this.getCell(new Position(column, row)).render(graphicsRenderer);
+//			}
+//		}
 	}
 
 }
