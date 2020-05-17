@@ -1,10 +1,16 @@
-package geometry;
+package ui;
 
 import java.awt.Dimension;
+
+import geometry.Bounds;
 
 public class GridLayout implements Layout {
 
 	private final Bounds[] boundary;
+	
+	public GridLayout(Dimension dimension, Integer rows, Integer columns) {
+		this(dimension, rows, columns, true);
+	}
 
 	public GridLayout(Dimension dimension, Integer rows, Integer columns, Boolean yInverse) {
 		this.boundary = new Bounds[rows * columns];

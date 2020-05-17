@@ -51,7 +51,7 @@ public class Position {
 	 * @param an position in the coordinate space.
 	 */
 	public Position(WollokObject position) {
-		this(Integer.valueOf(position.call("x").toString()), Integer.valueOf(position.call("y").toString()));
+		this(Double.valueOf(position.call("x").toString()).intValue(),Double.valueOf(position.call("y").toString()).intValue());
 	}
 
 	/**
@@ -81,8 +81,8 @@ public class Position {
 	 * @return a translated instance of position.
 	 */
 	public Position translate(WollokObject destiny) {
-		return new Position(Integer.valueOf(destiny.call("x").toString()),
-				Integer.valueOf(destiny.call("y").toString()));
+		return new Position(Double.valueOf(destiny.call("x").toString()).intValue(),
+				Double.valueOf(destiny.call("y").toString()).intValue());
 	}
 
 	/**
@@ -138,8 +138,8 @@ public class Position {
 	 * @return true if this position is the same as the position argument; false otherwise.
 	 */
 	public boolean equals(WollokObject another) {
-		return this.x().equals(Integer.valueOf(another.call("x").toString()))
-				&& this.y().equals(Integer.valueOf(another.call("y").toString()));
+		return this.x().equals(Double.valueOf(another.call("x").toString()).intValue())
+				&& this.y().equals(Double.valueOf(another.call("y").toString()).intValue());
 	}
 	
 	@Override

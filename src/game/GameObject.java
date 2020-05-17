@@ -5,10 +5,12 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
-import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
 
 import javax.swing.JFrame;
 
@@ -17,10 +19,15 @@ import org.uqbar.project.wollok.interpreter.WollokInterpreterEvaluator;
 import org.uqbar.project.wollok.interpreter.core.WollokObject;
 import org.uqbar.project.wollok.interpreter.nativeobj.WollokJavaConversions;
 
+import geometry.Collision;
+import geometry.Position;
 import ui.GraphicsRenderer;
+import ui.GridLayout;
 
 public class GameObject implements ComponentListener, Runnable, WindowListener {
-
+	
+	public static GameObject game;
+	
 	/** Wollok interpreter. */
 	private final WollokInterpreter interpreter;
 
@@ -54,6 +61,10 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 	private Dimension dimension;
 
 	private Board board;
+	
+	private Collision collision;
+	
+	private Scheduler scheduler;
 
 	public GameObject() {
 		this.interpreter = WollokInterpreter.getInstance();
@@ -63,34 +74,93 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 		this.frame.validate();
 		this.frame.addWindowListener(this);
 		this.frame.addComponentListener(this);
-		this.dimension(800, 600);
-		this.board = new Board(8, 8);
+		this.board = new Board();
+		this.collision = new Collision();
+		this.scheduler = new Scheduler();
+		this.dimension(this.board.columns() * 50, this.board.rows() * 50);
+		GameObject.game = this;
 	}
 
-	private WollokObject toWollokListObject(List<WollokObject> components) {
+	private WollokObject toWollokListObject(Collection<GameComponent> components) {
 		final WollokObject wcomponents = this.evaluator.newInstance("wollok.lang.List");
-		components.forEach(component -> wcomponents.call("add", component));
+		components.forEach(component -> wcomponents.call("add", component.asWollokObject()));
 		return wcomponents;
 	}
+	
+	public void listenKey(KeyListener listener) {
+		this.canvas.addKeyListener(listener);
+	}
+	
+	public void stopListenKey(KeyListener listener) {
+		this.canvas.removeKeyListener(listener);
+	}
+	
+	public WollokObject allVisuals() {
+		return this.toWollokListObject(this.board.components());
+	}
 
-	public void addVisual(WollokObject component) {
-		this.board.addComponent(component);
+	public void addVisual(WollokObject component) throws Exception {
+		final GameComponent _component = new GameComponent(component);
+		if (!_component.hasPositionMethodDefined()) {
+			throw new Exception(component + " no entiende el mensaje position()");
+		}
+		this.board.addComponent(new GameComponent(component));
 	}
 
 	public void addVisualIn(WollokObject component, WollokObject position) {
-		this.board.addComponent(component);
-	}
-
-	public WollokObject allVisuals() {
-		return this.toWollokListObject(this.board.getComponents());
+		this.board.addComponent(new GameComponent(component, position));
 	}
 
 	public Boolean hasVisual(WollokObject component) {
-		return this.board.hasComponent(component);
+		return this.board.hasComponent(new GameComponent(component));
 	}
 
 	public void removeVisual(WollokObject component) {
-		this.board.removeComponent(component);
+		this.board.removeComponent(new GameComponent(component));
+	}
+	
+	public void addVisualCharacterIn(WollokObject component, WollokObject position) {
+		final GameComponent _component = new GameComponent(component, position);
+		this.board.addComponent(_component);
+		this.listenKey(new ArrowListener(_component));
+	}
+	
+	public void ground(WollokObject resource) {
+		this.board.ground(resource);
+	}
+
+	public void boardGround(WollokObject resource) {
+		this.board.boardGround(resource);
+	}
+	
+	public WollokObject getObjectsIn(WollokObject position) {
+		return this.toWollokListObject(this.board.getCell(new Position(position)).components());
+	}
+	
+	public void whenCollideDo(WollokObject visual, WollokObject action) {
+		this.collision.listenCollision(visual, action);
+	}
+	
+	public void removeCollisionEvent(WollokObject visual) {
+		this.collision.stopListeningCollision(visual);
+	}
+	
+	public void onTick(WollokObject milliseconds, WollokObject name, WollokObject closure) {
+		this.scheduler.onTick(milliseconds, name, closure);
+	}
+	
+	public void schedule(WollokObject milliseconds, WollokObject closure) {
+		this.scheduler.schedule(milliseconds, closure);
+	}
+	
+	public void removeTickEvent(WollokObject name) {
+		this.scheduler.removeTickEvent(name);
+	}
+	
+	public void clear() {
+		Arrays.asList(this.canvas.getKeyListeners()).stream().forEach(listener -> this.stopListenKey(listener));
+		this.collision.clear();
+		this.scheduler.clear();
 	}
 
 	public void stop() {
@@ -158,15 +228,16 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 			if (deltaU >= 1) {
 				// update logic here.
 				this.board.update(deltaU);
+				// Do Collisions.
+				this.collision.collides(this.board.components());
 				deltaU--;
 			}
 
 			if (deltaF >= 1) {
 				// render logic here.
-				this.frame.setTitle(this.title + ": " + fps);
-				final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.graphics(), this.canvas.getSize());
-				this.board.render(graphicsRenderer);
-				this.frame.setTitle(this.title() + " : " + this.fpsCount);
+				final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.graphics());
+				this.board.render(graphicsRenderer, new GridLayout(this.canvas.getSize(), this.board.rows(), this.board.columns()));
+				this.frame.setTitle(this.title + " - fps: " + this.fpsCount);
 				frames++;
 				deltaF--;
 				this.showGraphics();
@@ -205,6 +276,7 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 		this.frame.setVisible(true);
 		this.canvas.setIgnoreRepaint(true);
 		this.canvas.createBufferStrategy(2);
+		this.canvas.requestFocus();
 	}
 	
 	private BufferStrategy bufferStrategy() {

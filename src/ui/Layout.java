@@ -1,4 +1,6 @@
-package geometry;
+package ui;
+
+import geometry.Bounds;
 
 public interface Layout {
 

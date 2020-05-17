@@ -7,6 +7,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.uqbar.project.wollok.interpreter.core.WollokObject;
+
+import geometry.Bounds;
+
 /**
  * A image representing a renderizable image.
  * 
@@ -17,9 +21,9 @@ import javax.imageio.ImageIO;
 public class Image {
 
 	/**
-	 * The path of this image file.
+	 * The name of this image file.
 	 */
-	private String path;
+	private String name;
 
 	/**
 	 * The BufferedImage representation of this image.
@@ -32,23 +36,33 @@ public class Image {
 	private Float opacity;
 
 	/**
-	 * Constructs and initializes a Image from a specific file path.
+	 * Constructs and initializes a Image by name.
 	 * 
-	 * @param route the image file route.
 	 */
 	public Image(BufferedImage bufferedImage) {
-		this.path = "";
+		this.name = "";
 		this.opacity = 1f;
 		this.bufferedImage = bufferedImage;
 	}
 
 	/**
+	 *  Constructs and initializes a Image by name.
+	 * 
+	 * @param image name.
+	 */
+	public Image(String name) {
+		this.name = name;
+		this.opacity = 1f;
+		this.createImage();
+	}
+	
+	/**
 	 * Constructs and initializes a Image from a specific file path.
 	 * 
-	 * @param route the image file route.
+	 * @param @param image name.
 	 */
-	public Image(String path) {
-		this.path = path;
+	public Image(WollokObject name) {
+		this.name = name.toString();
 		this.opacity = 1f;
 		this.createImage();
 	}
@@ -61,7 +75,7 @@ public class Image {
 	 * @param opacity  the desired opacity level for this image.
 	 */
 	public Image(String path, Float opacity) {
-		this.path = path;
+		this.name = path;
 		this.opacity = opacity;
 		this.createImage();
 	}
@@ -71,7 +85,7 @@ public class Image {
 	 */
 	private void createImage() {
 		try {
-			bufferedImage = ImageIO.read(new File(this.getClass().getClassLoader().getResource(path).getFile()));
+			bufferedImage = ImageIO.read(new File(this.getClass().getClassLoader().getResource(name).getFile()));
 		}
 
 		catch (IOException e) {
@@ -85,7 +99,7 @@ public class Image {
 	 * @return the file path of this image.
 	 */
 	public String path() {
-		return this.path;
+		return this.name;
 	}
 
 	/**
@@ -108,6 +122,10 @@ public class Image {
 
 	public BufferedImage asBufferedImage() {
 		return this.bufferedImage;
+	}
+	
+	public Image subimage(Bounds bounds) {
+		return new Image(this.bufferedImage.getSubimage(bounds.x(), bounds.y(), bounds.width(), bounds.height()));
 	}
 
 	public Image subimage(Integer x, Integer y, Integer width, Integer height) {
