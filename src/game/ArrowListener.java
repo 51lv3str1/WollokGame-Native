@@ -30,14 +30,17 @@ public class ArrowListener implements KeyListener {
 			leftIsPressed = true;
 			this.component.position(this.component.position().translate(-1, 0));
 		}
+
 		if (!this.upIsPressed && e.getKeyCode() == 38) {
 			upIsPressed = true;
 			this.component.position(this.component.position().translate(0, 1));
 		}
+
 		if (!this.rightIsPressed && e.getKeyCode() == 39) {
 			rightIsPressed = true;
 			this.component.position(this.component.position().translate(1, 0));
 		}
+
 		if (!this.downIsPressed && e.getKeyCode() == 40) {
 			downIsPressed = true;
 			this.component.position(this.component.position().translate(0, -1));

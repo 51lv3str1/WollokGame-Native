@@ -34,13 +34,7 @@ object game {
 	 * Example:
 	 *     game.addVisualCharacter(pepita) ==> pepita should have a position property
 	 */
-	method addVisualCharacter(component) {
-		self.addVisual(component)
-		keyboard.up().onPressDo({component.position(component.position().up(1))})
-		keyboard.right().onPressDo({component.position(component.position().right(1))})
-		keyboard.down().onPressDo({component.position(component.position().down(1))})
-		keyboard.left().onPressDo({component.position(component.position().left(1))})
-	}
+	method addVisualCharacter(component) native
 
 	/**
 	 * Adds an object to the board for drawing it on a specific position. It can be moved with arrow keys.
@@ -50,7 +44,7 @@ object game {
 	 * 
 	 * Example:
 	 *     game.addVisualCharacterIn(pepita, game.origin()) ==> no need for pepita to have a position property
-	 */
+	 */ 
 	method addVisualCharacterIn(component, position) native
 
 	/**

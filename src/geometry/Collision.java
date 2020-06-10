@@ -36,11 +36,15 @@ public class Collision {
 	}
 
 	private void collides(GameComponent collided, Collection<GameComponent> colliders) {
-		colliders.stream().forEach(collider -> this.collides(collided, collider));
+		for (GameComponent collider : colliders) {
+			this.collides(collided, collider);
+		}
 	}
 
 	public void collides(Collection<GameComponent> colliders) {
-		colliders.stream().forEach(collider -> this.collides(collider, colliders));
+		for (GameComponent collider : colliders) {
+			this.collides(collider, colliders);
+		}
 	}
 
 	public void clear() {

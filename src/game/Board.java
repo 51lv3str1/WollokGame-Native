@@ -120,11 +120,11 @@ public class Board {
 		return this.components().stream().filter(component -> component.position().equals(position))
 				.collect(Collectors.toList());
 	}
-
+	
 	public void addComponent(GameComponent component) {
 		this.components().add(component);
 	}
-
+	
 	public Boolean hasComponent(GameComponent component) {
 		return this.components.stream().anyMatch(another -> component.same(another));
 	}

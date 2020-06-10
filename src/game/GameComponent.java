@@ -35,34 +35,28 @@ public class GameComponent {
 		return this.wrapped;
 	}
 
-	public Boolean hasImageMethodDefined() {
-		return this.wkoUtils.hasMethodOrPropertyDefined(this.wrapped, "image");
-	}
-
-	public Boolean hasPositionMethodDefined() {
-		return this.wkoUtils.hasMethodOrPropertyDefined(this.wrapped, "position");
-	}
-
 	public Position position() {
-		return this.hasPositionMethodDefined() ? new Position(this.wrapped.call("position")) : this.position;
+		return this.wkoUtils.hasMethod(this.wrapped, "position", 0) || this.wkoUtils.hasProperty(this.wrapped, "position")
+				? new Position(this.wrapped.call("position")) : this.position;
 	}
 
 	public void position(WollokObject position) {
-		if (this.hasPositionMethodDefined()) {
-			this.wrapped.call("position", position);
-		}
-
-		else {
-			this.position = new Position(position);
-		}
+		this.position(new Position(position));
 	}
 
 	public void position(Position position) {
-		this.position = position;
+		if (this.wkoUtils.hasMethod(this.wrapped, "position", 1) || this.wkoUtils.hasProperty(this.wrapped, "position")) {
+			this.wrapped.call("position", GameObject.game.at(position));
+		}
+
+		else {
+			this.position = position;
+		}
 	}
 
 	public Image image() {
-		return this.hasImageMethodDefined() ? new Image(this.wrapped.call("image")) : GameComponent.DEFAULT_IMAGE;
+		return this.wkoUtils.hasMethod(this.wrapped, "image", 0) || this.wkoUtils.hasProperty(this.wrapped, "image")
+				? new Image(this.wrapped.call("image")) : GameComponent.DEFAULT_IMAGE;
 	}
 
 	public boolean same(GameComponent another) {
