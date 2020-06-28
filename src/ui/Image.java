@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.imageio.ImageIO;
 
@@ -85,11 +86,20 @@ public class Image {
 	 */
 	private void createImage() {
 		try {
-			bufferedImage = ImageIO.read(new File(this.getClass().getClassLoader().getResource(name).getFile()));
+			
+			final URL resource = this.getClass().getClassLoader().getResource(name);
+			
+			if(resource != null) {
+				bufferedImage = ImageIO.read(new File(resource.getFile()));
+			}
+			
+			else {
+				bufferedImage = ImageIO.read(new File(this.getClass().getClassLoader().getResource("wko.png").getFile()));
+			}
 		}
 
 		catch (IOException e) {
-			e.printStackTrace();
+			
 		}
 	}
 

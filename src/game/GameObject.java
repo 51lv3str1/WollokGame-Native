@@ -2,6 +2,7 @@ package game;
 
 import java.awt.Canvas;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -44,7 +45,7 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 	private volatile Thread loopThread = new Thread(this);
 
 	/** Game Frame */
-	private final JFrame frame = new JFrame(this.title);
+	private final Frame frame = new Frame(this.title);
 
 	/** Game Canvas */
 	private final Canvas canvas = new Canvas();
@@ -85,7 +86,6 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 		this.board = new Board();
 		this.collision = new Collision();
 		this.scheduler = new Scheduler();
-		this.dimension(this.board.columns() * 50, this.board.rows() * 50);
 		GameObject.game = this;
 	}
 
@@ -116,7 +116,6 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 	public WollokObject allVisuals() {
 		return this.toWollokListObject(this.board.components());
 	}
-	
 	
 	public void addVisual(WollokObject component) throws Exception {
 		if (!(this.wkoUtils.hasMethod(component, "position", 0) || this.wkoUtils.hasProperty(component, "position"))) {
@@ -231,14 +230,6 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 		return this.dimension;
 	}
 
-	private void dimension(Integer width, Integer height) {
-		this.dimension = new Dimension(width, height);
-		this.frame.setSize(dimension);
-		this.frame.setPreferredSize(dimension);
-		this.canvas.setSize(dimension);
-		this.canvas.setPreferredSize(dimension);
-	}
-
 	public void run() {
 		long initialTime = System.nanoTime();
 		double timeU = 1000000000.0 / ups;
@@ -269,7 +260,7 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 				// render logic here.
 				final GraphicsRenderer graphicsRenderer = new GraphicsRenderer(this.graphics());
 				this.board.render(graphicsRenderer, new GridLayout(this.canvas.getSize(), this.board.rows(), this.board.columns()));
-				this.frame.setTitle(this.title + " - fps: " + this.fpsCount);
+				this.frame.setTitle(this.title + " - fps: " + (this.fpsCount <= 60 ? this.fpsCount : 60));
 				frames++;
 				deltaF--;
 				this.showGraphics();
@@ -304,6 +295,14 @@ public class GameObject implements ComponentListener, Runnable, WindowListener {
 	// Window methods.
 
 	public void open() {
+		this.dimension = new Dimension(this.board.columns() * 50, (this.board.rows() * 50));
+		this.canvas.setMinimumSize(dimension);
+		this.canvas.setMaximumSize(dimension);
+		this.canvas.setPreferredSize(dimension);
+		this.canvas.setSize(dimension);
+		this.frame.setResizable(false);
+		this.frame.pack();
+		this.frame.setExtendedState(JFrame.NORMAL);
 		this.frame.setLocationRelativeTo(null);
 		this.frame.setVisible(true);
 		this.canvas.setIgnoreRepaint(true);

@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import static java.awt.RenderingHints.*;
 import game.Board;
 import game.Cell;
+import game.GameComponent;
 import geometry.Bounds;
 
 public class GraphicsRenderer {
@@ -13,7 +14,7 @@ public class GraphicsRenderer {
 	public static final GraphicsSettings LOW_QUALITY_RENDER = new LowGraphicsSetting();
 	public static final GraphicsSettings MEDIUM_QUALITY_RENDER = new MediumGraphicsSetting();
 	public static final GraphicsSettings HIGH_QUALITY_RENDER = new HighGraphicsSetting();
-	private static GraphicsSettings graphicSettings = MEDIUM_QUALITY_RENDER;
+	private static GraphicsSettings graphicSettings = LOW_QUALITY_RENDER;
 
 	/**
 	 * The Java 2D graphic context.
@@ -75,7 +76,6 @@ public class GraphicsRenderer {
 
 	public void render(Image image, Integer x, Integer y, Integer width, Integer height) {
 		this.graphics.drawImage(image.asBufferedImage(), x, y, width, height, null);
-//		this.graphics.drawRect(x, y, width, height);
 	}
 
 	public void render(Image image, Bounds bounds) {
@@ -83,9 +83,11 @@ public class GraphicsRenderer {
 	}
 
 	public void render(Cell cell, Bounds bounds) {
-		cell.components().stream().forEach(component -> {
-			this.render(component.image(), bounds);
-		});
+		for (int index = 0; index < cell.components().size(); index++) {
+			final GameComponent component = cell.components().get(index);
+			this.render(component.image(), new Bounds(bounds.x(), bounds.y() - (component.image().height() - 50),
+					component.image().width(), component.image().height()));
+		}
 	}
 
 	public void render(Board board, Layout layout) {
@@ -99,8 +101,7 @@ public class GraphicsRenderer {
 
 			else {
 				final Image ground = board.hasGround() ? board.ground() : Board.DEFAULT_IMAGE;
-//				this.render(ground, new Bounds(bounds.x(), bounds.y(), ground.width(), ground.height()));
-				this.render(ground, new Bounds(bounds.x(), bounds.y(), bounds.width(), bounds.height()));
+				this.render(ground, new Bounds(bounds.x(), bounds.y(), 50, 50));
 			}
 		});
 
