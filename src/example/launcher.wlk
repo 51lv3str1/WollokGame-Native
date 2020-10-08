@@ -11,8 +11,8 @@ object launch {
 
 	override method initialize() {
 		game.title("Wollok Game Example")
-		game.height(13)
-		game.width(20)
+		game.height(8)
+		game.width(8)
 		game.addVisualCharacter(wko)
 		game.start()
 	}
